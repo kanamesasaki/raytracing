@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Rendering of a Rectangle - Ray Tracing in WebGL</title>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body>
+    <h1>Rendering of a disk</h1>
+    <h2>Equation of a disk</h2>
+    <p>円板と直線の交点の求め方について確認しよう．円板はp1, p2の座標および半径と角度パラメタで定められており，直線は以下の式で表されるものとする．</p>
+    $$
+    \begin{equation}
+    \left[ \begin{array}{c} x \\ y \\ z \end{array} \right] = \left[ \begin{array}{c} x_\mathrm{o} \\ y_\mathrm{o} \\ z_\mathrm{o} \end{array} \right] + t \left[ \begin{array}{c} u_l \\ v_l \\ w_l \end{array} \right] \tag{1}
+    \end{equation}
+    $$
+    <img src="images\disk.svg" width="500">
+    <p>円板のローカルな基底を次のように定める．</p>
+    $$
+    \begin{equation}
+    \boldsymbol{R}_\mathrm{X} = \frac{\boldsymbol{p}_2-\boldsymbol{p}_1}{|\boldsymbol{p}_2-\boldsymbol{p}_1|}, ~~
+    \boldsymbol{R}_\mathrm{Y} = \frac{\boldsymbol{p}_3-\boldsymbol{p}_1}{|\boldsymbol{p}_3-\boldsymbol{p}_1|}, ~~
+    \boldsymbol{R}_\mathrm{Z} = \boldsymbol{R}_\mathrm{X} \times \boldsymbol{R}_\mathrm{Y} \tag{2}
+    \end{equation}
+    $$
+    <p>平面と直線が平行であるかどうかは，以下の条件で確認できる．</p>
+
+    <h2>Intersection of a ray and a disk</h2>
+    $$
+    \begin{equation}
+    \boldsymbol{l} \cdot \boldsymbol{R}_\mathrm{Z} = 0 \tag{2}
+    \end{equation}
+    $$
+    <p>
+      平面と直線が平行でない場合，平面と直線の式を解けば交点が求められるが，ここでは直線を平面のローカル座標に変換してから解を求めよう．
+      ローカル座標での直線および平面は，それぞれ以下のように表される．
+    </p>
+    $$
+    \begin{equation}
+    \left[ \begin{array}{c} X \\ Y \\ Z \end{array} \right] = \left[ \begin{array}{c} X_\mathrm{o} \\ Y_\mathrm{o} \\ Z_\mathrm{o} \end{array} \right] + t \left[ \begin{array}{c} U_l \\ V_l \\ W_l \end{array} \right], ~~
+    \mathrm{where}~~ \left[ \begin{array}{c} X_\mathrm{o} \\ Y_\mathrm{o} \\ Z_\mathrm{o} \end{array} \right] = \left[ \begin{array}{ccc} \boldsymbol{R}_\mathrm{X} & \boldsymbol{R}_\mathrm{Y} & \boldsymbol{R}_\mathrm{Z} \end{array} \right]^\mathrm{T} \left\{ \left[ \begin{array}{c} x_\mathrm{o} \\ y_\mathrm{o} \\ z_\mathrm{o} \end{array} \right] - \boldsymbol{p}_1 \right\}, ~~
+    \left[ \begin{array}{c} U_l \\ V_l \\ W_l \end{array} \right] = \left[ \begin{array}{ccc} \boldsymbol{R}_\mathrm{X} & \boldsymbol{R}_\mathrm{Y} & \boldsymbol{R}_\mathrm{Z} \end{array} \right]^\mathrm{T} \left[ \begin{array}{c} u_l \\ v_l \\ w_l \end{array} \right] \tag{5}
+    \end{equation}
+    $$
+    $$
+    \begin{equation}
+    \left[ \begin{array}{c} X \\ Y \\ Z \end{array} \right] \cdot \left[ \begin{array}{c} 0 \\ 0 \\ 1 \end{array} \right] = 0 \tag{6}
+    \end{equation}
+    $$
+    <p>これより交点に対応するパラメタtは以下のように表される．</p>
+    $$
+    \begin{equation}
+    t = - \frac{Z_\mathrm{o}}{W_l} \tag{6}
+    \end{equation}
+    $$
+
+    <p>得られた交点が，円板の特定の一部に含まれるかは，以下の条件を確認すればよい．</p>
+    $$
+    \begin{equation}
+    \mathrm{inner\_radius} \le \sqrt{X^2 + Y^2} \le \mathrm{outer\_radius}  \tag{11}
+    \end{equation}
+    $$
+    $$
+    \begin{equation}
+    \mathrm{start\_angle} \le \theta \le \mathrm{end\_angle}, ~~ 
+    \mathrm{where}~~ \theta = \mathrm{atan2}(Y, X) \tag{12}
+    \end{equation}
+    $$
+
+  </body>
+  <footer>
+    <a href="index.html">Ray Tracing in WebGL</a> &#187; <a href="disk.html">Disk</a>
+    <span style="float: right">Copyright 2021, Kaname Sasaki</span>
+  </footer>
+</html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Rendering of a Rectangle - Ray Tracing in WebGL</title>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body>
+    <h1>Rendering of a Rectangle</h1>
+    <h2>Equation of a rectangle</h2>
+    <p>長方形と直線の交点の求め方について確認しよう．長方形はp1, p2, p3の3点の座標で定められており，直線は以下の式で表されるものとする．</p>
+    $$
+    \begin{equation}
+    \left[ \begin{array}{c} x \\ y \\ z \end{array} \right] = \left[ \begin{array}{c} x_\mathrm{o} \\ y_\mathrm{o} \\ z_\mathrm{o} \end{array} \right] + t \left[ \begin{array}{c} u_l \\ v_l \\ w_l \end{array} \right] \tag{1}
+    \end{equation}
+    $$
+    <img src="images\rectangle.svg" width="500">
+    <p>長方形のローカルな基底を次のように定める．</p>
+    $$
+    \begin{equation}
+    \boldsymbol{R}_\mathrm{X} = \frac{\boldsymbol{p}_2-\boldsymbol{p}_1}{|\boldsymbol{p}_2-\boldsymbol{p}_1|}, ~~
+    \boldsymbol{R}_\mathrm{Y} = \frac{\boldsymbol{p}_3-\boldsymbol{p}_1}{|\boldsymbol{p}_3-\boldsymbol{p}_1|}, ~~
+    \boldsymbol{R}_\mathrm{Z} = \boldsymbol{R}_\mathrm{X} \times \boldsymbol{R}_\mathrm{Y} \tag{2}
+    \end{equation}
+    $$
+    <p>平面と直線が平行であるかどうかは，以下の条件で確認できる．</p>
+    $$
+    \begin{equation}
+    \boldsymbol{l} \cdot \boldsymbol{R}_\mathrm{Z} = 0 \tag{2}
+    \end{equation}
+    $$
+    <h2>Intersections of a ray and a rectangle</h2>
+    <p>
+      平面と直線が平行でない場合，平面と直線の式を解けば交点が求められるが，ここでは直線を平面のローカル座標に変換してから解を求めよう．
+      ローカル座標での直線および平面は，それぞれ以下のように表される．
+    </p>
+    $$
+    \begin{equation}
+    \left[ \begin{array}{c} X \\ Y \\ Z \end{array} \right] = \left[ \begin{array}{c} X_\mathrm{o} \\ Y_\mathrm{o} \\ Z_\mathrm{o} \end{array} \right] + t \left[ \begin{array}{c} U_l \\ V_l \\ W_l \end{array} \right], ~~
+    \mathrm{where}~~ \left[ \begin{array}{c} X_\mathrm{o} \\ Y_\mathrm{o} \\ Z_\mathrm{o} \end{array} \right] = \left[ \begin{array}{ccc} \boldsymbol{R}_\mathrm{X} & \boldsymbol{R}_\mathrm{Y} & \boldsymbol{R}_\mathrm{Z} \end{array} \right]^\mathrm{T} \left\{ \left[ \begin{array}{c} x_\mathrm{o} \\ y_\mathrm{o} \\ z_\mathrm{o} \end{array} \right] - \boldsymbol{p}_1 \right\}, ~~
+    \left[ \begin{array}{c} U_l \\ V_l \\ W_l \end{array} \right] = \left[ \begin{array}{ccc} \boldsymbol{R}_\mathrm{X} & \boldsymbol{R}_\mathrm{Y} & \boldsymbol{R}_\mathrm{Z} \end{array} \right]^\mathrm{T} \left[ \begin{array}{c} u_l \\ v_l \\ w_l \end{array} \right] \tag{5}
+    \end{equation}
+    $$
+    $$
+    \begin{equation}
+    \left[ \begin{array}{c} X \\ Y \\ Z \end{array} \right] \cdot \left[ \begin{array}{c} 0 \\ 0 \\ 1 \end{array} \right] = 0 \tag{6}
+    \end{equation}
+    $$
+    <p>これより交点に対応するパラメタtは以下のように表される．</p>
+    $$
+    \begin{equation}
+    t = - \frac{Z_\mathrm{o}}{W_l} \tag{6}
+    \end{equation}
+    $$
+    <p>上記の方法で求めた平面と直線の交点\( (X, Y, 0) \)が，長方形領域にに含まれるかどうかは，以下の条件を確認すればよい．</p>
+    $$
+    \begin{equation}
+    0 \le X \le |\boldsymbol{p}_2 - \boldsymbol{p}_1| \tag{10}
+    \end{equation}
+    $$
+    $$
+    \begin{equation}
+    0 \le Y \le |\boldsymbol{p}_3 - \boldsymbol{p}_1| \tag{11}
+    \end{equation}
+    $$
+
+  </body>
+  <footer>
+    <a href="index.html">Ray Tracing in WebGL</a> &#187; <a href="rectangle.html">Rectangle</a>
+    <span style="float: right">Copyright 2021, Kaname Sasaki</span>
+  </footer>
+</html>

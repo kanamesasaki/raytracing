@@ -11,13 +11,13 @@
   <h2>Introduction</h2>
   <p>
     In this page, basic technics to perform ray tracing are explained. By using the WebGL, it is possible to present the ray tracing results on the web browser.<br>
-    Repository: <a href="https://github.com/kanamesasaki/raytracer">https://github.com/kanamesasaki/raytracer</a><br>
+    Repository: <a href="https://github.com/kanamesasaki/raytracing">https://github.com/kanamesasaki/raytracing</a><br>
   </p>
 
   <h2>Ray Tracing Basics</h2>
   <ul>
-    <li><a href="jest.html">Jest testing environment setup without Babel</a></li>
-    <li><a href="import-shader.html">How to import shader scripts into JavaScript</a></li>
+    <li><a href="jest.html">Jest testing environment for ES6 modules without Babel</a></li>
+    <li><a href="import-shader.html">How to import GLSL shader scripts from JavaScript</a></li>
     <li><a href="camera.html">Camera rotation</a></li>
   </ul>
 
@@ -37,8 +37,8 @@
   </canvas>
 
   <script type="module">
-    import { getVertexShader, getFragmentShader } from './utils.js'
-    import { Camera } from './camera.js'
+    import { getVertexShader, getFragmentShader } from '../src/utils.js'
+    import { Camera } from '../src/camera.js'
 
     // Global variables that are set and used
     // across the application
@@ -164,7 +164,8 @@
 </body>
 
 <footer>
-  <a href="index.html">Ray Tracing in WebGL</a> &#187;
+  <a href="https://kanamesasaki.github.io/">Author's page</a> &#187;
+  <a href="index.html">Ray Tracing in WebGL</a>
   <span style="float: right">Copyright 2021, Kaname Sasaki</span>
 </footer>
 </html>

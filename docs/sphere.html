@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Rendering of a Sphere - Ray Tracing in WebGL</title>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body>
+    <h1>Rendering of a Sphere</h1>
+    <h2>Equation of a sphere</h2>
+    <p>下図において，p1が3次元座標の原点にある場合，球は以下の式で表される．さらに後の議論のため，p2がZ軸上，p3がX軸上にあることを仮定しておく．</p>
+    $$
+    \begin{equation}
+    X^2 + Y^2 + Z^2 = r^2 \tag{1}
+    \end{equation}
+    $$
+    <img src="images\sphere.svg" width="500">
+    <p>球のローカルな基底は以下のように求められる．</p>
+    $$
+    \begin{equation}
+    \boldsymbol{R}_\mathrm{X} = \frac{\boldsymbol{p}_3-\boldsymbol{p}_1}{|\boldsymbol{p}_3-\boldsymbol{p}_1|}, ~~
+    \boldsymbol{R}_\mathrm{Z} = \frac{\boldsymbol{p}_2-\boldsymbol{p}_1}{|\boldsymbol{p}_2-\boldsymbol{p}_1|}, ~~
+    \boldsymbol{R}_\mathrm{Y} = \boldsymbol{R}_\mathrm{Z} \times \boldsymbol{R}_\mathrm{X} \tag{2}
+    \end{equation}
+    $$
+    <h2>Intersections of a ray and a sphere</h2>
+    <p>一般の位置・方向の円柱を式で表すと複雑になるので，(1)で表された円柱と直線の交点を求めよう．</p>
+    $$
+    \begin{equation}
+    \left[ \begin{array}{c} x \\ y \\ z \end{array} \right] = \left[ \begin{array}{c} x_o \\ y_o \\ z_o \end{array} \right] + t \left[ \begin{array}{c} u_l \\ v_l \\ w_l \end{array} \right] \tag{4}
+    \end{equation}
+    $$
+    <p>直線(3)をローカル座標に変換すると，(4)の形に書き換えられる．</p>
+    $$
+    \begin{gather}
+    \left[ \begin{array}{c} X \\ Y \\ Z \end{array} \right] = \left[ \begin{array}{c} X_\mathrm{o} \\ Y_\mathrm{o} \\ Z_\mathrm{o} \end{array} \right] + t \left[ \begin{array}{c} U_l \\ V_l \\ W_l \end{array} \right], ~~
+    \mathrm{where}~~ \left[ \begin{array}{c} X_\mathrm{o} \\ Y_\mathrm{o} \\ Z_\mathrm{o} \end{array} \right] = \left[ \begin{array}{ccc} \boldsymbol{R}_\mathrm{X} & \boldsymbol{R}_\mathrm{Y} & \boldsymbol{R}_\mathrm{Z} \end{array} \right]^\mathrm{T} \left\{ \left[ \begin{array}{c} x_\mathrm{o} \\ y_\mathrm{o} \\ z_\mathrm{o} \end{array} \right] - \boldsymbol{p}_1 \right\}, ~~
+    \left[ \begin{array}{c} U_l \\ V_l \\ W_l \end{array} \right] = \left[ \begin{array}{ccc} \boldsymbol{R}_\mathrm{X} & \boldsymbol{R}_\mathrm{Y} & \boldsymbol{R}_\mathrm{Z} \end{array} \right]^\mathrm{T} \left[ \begin{array}{c} u_l \\ v_l \\ w_l \end{array} \right] \tag{5}
+    \end{gather}
+    $$
+    <p>これを(1)に代入し，tについての2次方程式を解くと，球と直線の交点がローカル座標で求められる．</p>
+    $$
+    \begin{gather}
+    (tU_l+X_\mathrm{o})^2 + (tV_l+Y_\mathrm{o})^2 + (tW_l+Z_\mathrm{o})^2 = r^2 \tag{6} \\
+    (U_l^2+V_l^2+W_l^2)t^2 + 2\left\{ U_lX_\mathrm{o} + V_lY_\mathrm{o} + W_lZ_\mathrm{o} \right\}t + X_\mathrm{o}^2 + Y_\mathrm{o}^2 + Z_\mathrm{o}^2 - r^2 = 0 \tag{7}
+    \end{gather}
+    $$
+    <p>交点の個数は判別式(discriminant)を用いて確認できる．</p>
+    $$
+    \begin{equation}
+    D = \left( U_lX_\mathrm{o} + V_lY_\mathrm{o} + W_lZ_\mathrm{o} \right)^2 - (U_l^2+V_l^2+W_l^2) \left( X_\mathrm{o}^2 + Y_\mathrm{o}^2 + Z_\mathrm{o}^2 - r^2 \right) \tag{8}
+    \end{equation}
+    $$
+    <p>交点があれば，解となるtおよび交点の座標は以下のように求められる．</p>
+    $$
+    \begin{equation}
+    t_{\pm} = \frac{-(U_lX_\mathrm{o} + V_lY_\mathrm{o} + W_lZ_\mathrm{o}) \pm \sqrt{D}}{U_l^2+V_l^2+W_l^2} \tag{9}
+    \end{equation}
+    $$
+    <p>上記の方法で得られた球と直線の交点が，球面上の特定の領域に含まれているかは以下の条件を確認すればよい．</p>
+    $$
+    \begin{equation}
+    \mathrm{base\_truncation} \le Z \le \mathrm{apex\_truncation} \tag{10}
+    \end{equation}
+    $$
+    $$
+    \begin{equation}
+    \mathrm{start\_angle} \le \theta \le \mathrm{end\_angle}, ~~\mathrm{where}~~ \theta = \mathrm{atan2}(Y,X) \tag{11}
+    \end{equation}
+    $$
+
+  </body>
+  <footer>
+    <a href="index.html">Ray Tracing in WebGL</a> &#187; <a href="sphere.html">Sphere</a>
+    <span style="float: right">Copyright 2021, Kaname Sasaki</span>
+  </footer>
+</html>
