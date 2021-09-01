@@ -1,4 +1,4 @@
-import { Camera } from '../src/camera'
+import { Camera } from '../js/camera'
 import * as mat4 from '../gl-matrix/mat4'
 import * as vec3 from '../gl-matrix/vec3'
 
