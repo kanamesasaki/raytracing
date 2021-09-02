@@ -32,9 +32,14 @@
     <li><a href="paraboloid.html">Paraboloid</a></li>
   </ul>
 
+  
   <canvas id="webgl-canvas">
     Your browser does not support the HTML5 canvas element.
   </canvas>
+  <input type="button" style="z-index:2; position:absolute; top:65%; left:90%" value="Rotate Y +10&deg;" id="btn1"/>
+  <input type="button" style="z-index:2; position:absolute; top:65%; left:80%" value="Rotate Y -10&deg;" id="btn2"/>
+  <input type="button" style="z-index:2; position:absolute; top:70%; left:85%" value="Rotate X +10&deg;" id="btn3"/>
+  <input type="button" style="z-index:2; position:absolute; top:60%; left:85%" value="Rotate X -10&deg;" id="btn4"/>
 
   <script type="module">
     import { getVertexShader, getFragmentShader } from './js/utils.js'
@@ -114,8 +119,6 @@
 
       camera = new Camera();
       camera.setPosition(0.0, 0.0, 10.0);
-      // camera.translateY(2.0);
-      camera.rotateX(Math.PI/180.0*60.0);
       program.uCameraMatrix = gl.getUniformLocation(program, 'uCameraMatrix');
       gl.uniformMatrix4fv(program.uCameraMatrix, false, camera.matrix);
 
@@ -155,6 +158,34 @@
       gl.bindBuffer(gl.ARRAY_BUFFER, null);
       
       // draw geometry
+      draw();
+    }
+
+    document.getElementById("btn1").onclick = function() {
+      // console.log('rotate Y +10')
+      camera.rotateY(Math.PI/180.0*10.0);
+      gl.uniformMatrix4fv(program.uCameraMatrix, false, camera.matrix);
+      draw();
+    }
+
+    document.getElementById("btn2").onclick = function() {
+      // console.log('rotate Y -10')
+      camera.rotateY(-Math.PI/180.0*10.0);
+      gl.uniformMatrix4fv(program.uCameraMatrix, false, camera.matrix);
+      draw();
+    }
+
+    document.getElementById("btn3").onclick = function() {
+      // console.log('rotate X +10')
+      camera.rotateX(Math.PI/180.0*10.0);
+      gl.uniformMatrix4fv(program.uCameraMatrix, false, camera.matrix);
+      draw();
+    }
+
+    document.getElementById("btn4").onclick = function() {
+      // console.log('rotate X -10')
+      camera.rotateX(-Math.PI/180.0*10.0);
+      gl.uniformMatrix4fv(program.uCameraMatrix, false, camera.matrix);
       draw();
     }
 
