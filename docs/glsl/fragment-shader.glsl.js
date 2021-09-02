@@ -55,26 +55,34 @@ float sphere(vec3 p1, vec3 p2, vec3 p3, float radius, float start_angle, float e
     if (thetap <= end_angle) {
         if (thetam <= end_angle) {
             // both
-            if (tm < 0.0) {
-                if (pp[2] > apex_truncation || pp[2] < base_truncation) { return -1.0; }
-                else {return tp; }
+            if (tm > 0.0) {
+                if (pm[2] <= apex_truncation && pm[2] >= base_truncation) { return tm; }
+                else {
+                    if (pp[2] <= apex_truncation && pp[2] >= base_truncation) { return tp; }
+                    else { return -1.0; }
+                }
             }
             else {
-                if (pp[2] > apex_truncation || pp[2] < base_truncation) { return -1.0; }
-                else {return tm; }
+                if (tp > 0.0) {
+                    if (pp[2] <= apex_truncation && pm[2] >= base_truncation) { return tp; }
+                    else { return -1.0; }
+                }
+                else {
+                    return -1.0;
+                }
             }
         }
         else {
             // only plus
-            if (pp[2] > apex_truncation || pp[2] < base_truncation) { return -1.0; }
-            else {return tp; }
+            if (tp > 0.0 && pp[2] <= apex_truncation && pp[2] >= base_truncation) { return tp; }
+            else { return -1.0; }
         }
     }
     else {
         if (thetam <= end_angle) {
             // only minus
-            if (pp[2] > apex_truncation || pp[2] < base_truncation) { return -1.0; }
-            else {return tm; }
+            if (tm > 0.0 && pm[2] <= apex_truncation && pm[2] >= base_truncation) { return tm; }
+            else { return -1.0; }
         }
         else {
             // no 
@@ -83,8 +91,14 @@ float sphere(vec3 p1, vec3 p2, vec3 p3, float radius, float start_angle, float e
     }
 }
 
-vec3 sphereNormaml(vec3 pt, vec3 s, float radius) {
-    return (pt - s) / radius;
+vec3 sphereNormaml(vec3 pt, vec3 s, float radius, vec3 rd) {
+    vec3 reflect =  (pt - s) / radius;
+    if (dot(reflect, rd) <= 0.0) {
+        return reflect;
+    }
+    else {
+        return -reflect;
+    }
 }
 
 float intersect(vec3 ro, vec3 rd, out vec3 norm, out vec3 color) {
@@ -95,8 +109,8 @@ float intersect(vec3 ro, vec3 rd, out vec3 norm, out vec3 color) {
     float radius = 2.0;
     float start_angle = -2.0/4.0 * PI;
     float end_angle = 3.0/4.0 * PI;
-    float apex_truncation = 0.8;
-    float base_truncation = -2.0;
+    float apex_truncation = 2.0;
+    float base_truncation = -1.0;
     vec3 sphereColor = vec3(0.9, 0.8, 0.6);
 
     // If we wanted multiple objects in the scene you would loop through them here
@@ -108,7 +122,7 @@ float intersect(vec3 ro, vec3 rd, out vec3 norm, out vec3 color) {
         // Point of intersection
         vec3 pt = ro + distance * rd;
         // Get normal for that point
-        norm = sphereNormaml(pt, p1, radius);
+        norm = sphereNormaml(pt, p1, radius, rd);
         // Get color for the sphere
         color = sphereColor;
     }
