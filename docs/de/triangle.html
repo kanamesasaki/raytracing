@@ -5,8 +5,16 @@
     <title>Rendering of a Rectangle - Ray Tracing in WebGL</title>
     <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
   </head>
+  <header>
+    <a href="index.html">Ray Tracing in WebGL</a> &#187; <a href="triangle.html">Triangle</a>
+    <span style="float: right"><ul class="select-lang">
+        <li><a href="../en/index.html">English</a></li>
+        <li><a href="../de/index.html">Deutsch</a></li>
+        <li><a href="../ja/index.html">日本語</a></li>
+    </ul></span>
+  </header>
 
   <body>
     <h1>Rendering of a Triangle</h1>
@@ -17,7 +25,7 @@
     \left[ \begin{array}{c} x \\ y \\ z \end{array} \right] = \left[ \begin{array}{c} x_\mathrm{o} \\ y_\mathrm{o} \\ z_\mathrm{o} \end{array} \right] + t \left[ \begin{array}{c} u_l \\ v_l \\ w_l \end{array} \right] \tag{1}
     \end{equation}
     $$
-    <img src="images\triangle.svg" width="500">
+    <img src="..\images\triangle.svg" width="500">
     <p>三角形のローカルな基底を次のように定める．ただし\(\boldsymbol{R}_\mathrm{X}\)と\(\boldsymbol{R}_\mathrm{Y}\)は直交しておらず，いずれの基底も正規化されていない．</p>
     $$
     \begin{equation}
@@ -66,7 +74,7 @@
 
   </body>
   <footer>
-    <a href="index.html">Ray Tracing in WebGL</a> &#187; <a href="triangle.html">TTriangle</a>
+    <a href="index.html">Ray Tracing in WebGL</a> &#187; <a href="triangle.html">Triangle</a>
     <span style="float: right">Copyright 2021, Kaname Sasaki</span>
   </footer>
 </html>

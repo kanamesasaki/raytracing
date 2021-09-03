@@ -82,12 +82,13 @@ td {
 }
 
 img {
-    padding: 1.5em 20px 0.5em 20px;
+    display: block;
+    margin: auto;
 }
 
 header {
     background-color: #eee;
-    padding: 0.4em 20px 0.4em 20px;
+    padding: 0.5em 20px 0.5em 20px;
 }
 
 footer {
@@ -101,4 +102,22 @@ div {
 
 canvas {
     border: 0px solid red;
+}
+
+ul.select-lang li {
+    display: inline;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 1.0em;
+    margin-right: 1.0em;
+}
+
+ul.select-lang {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+ul li {
+    margin-top: 0.2em;
+    margin-bottom: 0.2em;
 }
