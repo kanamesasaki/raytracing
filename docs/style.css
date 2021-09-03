@@ -95,6 +95,10 @@ footer {
     padding: 0.5em 20px 0.5em 20px;
 }
 
+div {
+    position: relative;
+}
+
 canvas {
-    border: 5px dotted blue;
+    border: 0px solid red;
 }

@@ -1,16 +1,6 @@
 import vertex from '../glsl/vertex-shader.glsl.js'
 import fragment from '../glsl/fragment-shader.glsl.js'
 
-function autoResizeCanvas(canvas) {
-    const expandFullScreen = () => {
-        canvas.width = window.innerWidth
-        canvas.height = window.innerHeight
-    }
-    expandFullScreen()
-    // resize screen when the browser has triggered the resize event
-    window.addEventListener('resize', expandFullScreen)
-}
-
 // Extract the content's of a shader script from the JavaScript file 
 // Return the compiled shader
 export function getVertexShader(gl) {
