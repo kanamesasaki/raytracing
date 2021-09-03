@@ -1,6 +1,15 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CCZTCJYRD8"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-CCZTCJYRD8');
+    </script>
     <meta charset="UTF-8">
     <title>Jest testing environment for ES6 modules without Babel - Ray Tracing in WebGL</title>
     <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
@@ -20,10 +29,10 @@
   <body>
     <h1>Jest testing environment for ES6 modules without Babel</h1>
     <h2>Create npm project</h2>
-    <p>プロジェクトを作成したいディレクトリ(ここではC:\projects\raytracer)で以下のコマンドを打つ．</p>
-<pre><code>C:\projects\raytracer>npm init</code></pre>
-    <p>以下のようにいくつか質問に答えていくと，自動的にpackage.jsonファイルが作成される．</p>
-<pre><code>package name: (raytracer)
+    <p>In the project directory (In case C:\projects\raytracing), execute the following command．</p>
+<pre><code>C:\projects\raytracing>npm init</code></pre>
+    <p>After answering the questions below, package.json file is automatically generated.</p>
+<pre><code>package name: (raytracing)
 version: (1.0.0)
 description:
 entry point: (index.js)
@@ -32,10 +41,10 @@ git repository:
 keywords:
 author: Kaname Sasaki
 license: (ISC) MIT
-About to write to C:\projects\raytracer\package.json:
+About to write to C:\projects\raytracing\package.json:
 
 {
-  "name": "raytracer",
+  "name": "raytracing",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -51,10 +60,13 @@ About to write to C:\projects\raytracer\package.json:
 
 Is this OK? (yes)
 </code></pre>
+
     <h2>Jest settings</h2>
-    <p>package.jsonに以下のように"scripts"と"type"の設定を追加する．</p>
+    <p>Install Jest by the following command.</p>
+<pre><code>C:\projects\raytracing>npm install --save-dev jest</code></pre>
+    <p>In the package.json file, add settings for "scripts" and "type".</p>
 <pre><code>{
-  "name": "raytracer",
+  "name": "raytracing",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -71,23 +83,19 @@ Is this OK? (yes)
     "jest": "^26.6.3"
   }
 }</code></pre>
-<p>jest.config.jsを作成して，以下のように記述する．</p>
+<p>Create jest.config.js file and write the following scripts.</p>
 <pre><code>export default {
   testEnvironment: 'jest-environment-node',
   transform: {}
 };</code></pre>
-<p>以下のコマンドでJestテストが実行できる．</p>
-<pre><code>npm test</code></pre>
+<p>By the following command, Jest test can be executed.</p>
+<pre><code>C:\projects\raytracing>npm test</code></pre>
 
 <h2>Setting-up a local server</h2>
 <p>
-  作成したJavaScriptをブラウザ上で実行する場合，HTML内でひとつずつJavaScriptファイルを読み込む方法と，JavaScriptのimport/exportを用いて呼び出す方法の2通りが考えられる．
-  import/exportはローカルファイル上では機能しないので，ローカルサーバーが必要になる．
-  Node.jsを用いれば，実行したいHTMLファイルのあるディレクトリで以下のコマンドを打つと，簡単にローカルサーバーが建てられる．
+  By using Node.js, it is possible to setup the local server easily by the following command. 
 </p>
-<pre><code>npx http-server</code></pre>
-
-
+<pre><code>C:\projects\raytracing>npx http-server</code></pre>
 
   </body>
   <footer>
