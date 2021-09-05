@@ -131,10 +131,6 @@ float intersect(vec3 ro, vec3 rd, out vec3 norm, out vec3 color) {
 }
 
 void main(void) {
-    // fragColor = debugColor(uCameraMatrix == mat4(1.0));
-    // fragColor = vec4(0.0, 1.0, 0.0, 1.0);
-    // fragColor = vColor;
-
     vec2 uv = gl_FragCoord.xy * uInverseTextureSize;
     float aspectRatio = uInverseTextureSize.y / uInverseTextureSize.x;
     vec3 rd_local = normalize(vec3(-0.5 + uv * vec2(aspectRatio, 1.0), -1.0));
