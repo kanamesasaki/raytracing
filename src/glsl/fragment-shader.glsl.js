@@ -91,6 +91,30 @@ float sphere(vec3 p1, vec3 p2, vec3 p3, float radius, float start_angle, float e
     }
 }
 
+float rectangle(vec3 p1, vec3 p2, vec3 p3, vec3 ro, vec3 rd) {
+    vec3 Ry = normalize(p3 - p1);
+    vec3 Rx = normalize(p2 - p1);
+    vec3 Rz = cross(Rx, Ry);
+    if (dot(Rz, rd) == 0.0) {
+        return -1.0;
+    }
+    mat3 Rmat = mat3(Rx, Ry, Rz);
+    mat3 Rinv = transpose(Rmat);
+    vec3 Ro = Rinv * (ro - p1);
+    vec3 Rd = Rinv * rd;
+    float t = -Ro[2]/Rd[2];
+    if (t <= 0.0) {
+        return t;
+    }
+    vec3 XYZ = Ro + Rd * t;
+    if (0.0 <= XYZ[0] && XYZ[0] <= length(p2 - p1) && 0.0 <= XYZ[1] && XYZ[1] <= length(p3 - p1) ) {
+        return t;
+    }
+    else {
+        return -1.0;
+    }
+}
+
 vec3 sphereNormaml(vec3 pt, vec3 s, float radius, vec3 rd) {
     vec3 reflect =  (pt - s) / radius;
     if (dot(reflect, rd) <= 0.0) {
@@ -101,22 +125,37 @@ vec3 sphereNormaml(vec3 pt, vec3 s, float radius, vec3 rd) {
     }
 }
 
+vec3 rectangleNormaml(vec3 p1, vec3 p2, vec3 p3, vec3 rd) {
+    vec3 Ry = normalize(p3 - p1);
+    vec3 Rx = normalize(p2 - p1);
+    vec3 Rz = cross(Rx, Ry);
+    if (dot(Rz, rd) <= 0.0) {
+        return Rz;
+    }
+    else {
+        return -Rz;
+    }
+}
+
 float intersect(vec3 ro, vec3 rd, out vec3 norm, out vec3 color) {
     float distance = maxDistance;
     vec3 p1 = vec3(0.0, 0.0, 0.0);
     vec3 p2 = vec3(0.0, 1.0, 0.0);
     vec3 p3 = vec3(1.0, 0.0, 0.0);
+    vec3 q1 = vec3(0.0, 0.0, 0.0);
+    vec3 q2 = vec3(0.0, 2.5, 0.0);
+    vec3 q3 = vec3(2.5, 0.0, 0.0);
     float radius = 2.0;
     float start_angle = -2.0/4.0 * PI;
     float end_angle = 3.0/4.0 * PI;
     float apex_truncation = 2.0;
     float base_truncation = -1.0;
     vec3 sphereColor = vec3(0.9, 0.8, 0.6);
+    vec3 rectangleColor = vec3(0.2, 0.3, 0.4);
 
     // If we wanted multiple objects in the scene you would loop through them here
     // and return the normal and color with the closest intersection point (lowest distance).
     float intersectionDistance = sphere(p1, p2, p3, radius, start_angle, end_angle, apex_truncation, base_truncation, ro, rd);
-
     if (intersectionDistance > 0.0 && intersectionDistance < distance) {
         distance = intersectionDistance;
         // Point of intersection
@@ -126,7 +165,15 @@ float intersect(vec3 ro, vec3 rd, out vec3 norm, out vec3 color) {
         // Get color for the sphere
         color = sphereColor;
     }
-    
+
+    float rectangleDistance = rectangle(q1, q2, q3, ro, rd);
+    if (rectangleDistance > 0.0 && rectangleDistance < distance) {
+        distance = rectangleDistance;
+        // Get normal for that point
+        norm = rectangleNormaml(q1, q2, q3, rd);
+        // Get color for the sphere
+        color = rectangleColor;
+    }
     return distance;
 }
 

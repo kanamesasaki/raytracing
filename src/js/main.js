@@ -151,6 +151,97 @@ document.getElementById("btn4").onclick = function() {
   draw();
 }
 
+document.getElementById("sphere-dialog-open").onclick = function() {
+  let dialog = document.getElementById("sphere-dialog-panel");
+  dialog.showModal();
+  let cancel = document.getElementById('sphere-dialog-cancel');
+  cancel.addEventListener('click', () => {
+    dialog.close('cancel');
+  });
+  let ok = document.getElementById('sphere-dialog-ok');
+  ok.addEventListener('click', () => {
+    dialog.close('ok');
+  });
+}
+
+document.getElementById("rectangle-dialog-open").onclick = function() {
+  let dialog = document.getElementById("rectangle-dialog-panel");
+  dialog.showModal();
+  let cancel = document.getElementById('rectangle-dialog-cancel');
+  cancel.addEventListener('click', () => {
+    dialog.close('cancel');
+  });
+  let ok = document.getElementById('rectangle-dialog-ok');
+  ok.addEventListener('click', () => {
+    dialog.close('ok');
+  });
+}
+
+document.getElementById("triangle-dialog-open").onclick = function() {
+  let dialog = document.getElementById("triangle-dialog-panel");
+  dialog.showModal();
+  let cancel = document.getElementById('triangle-dialog-cancel');
+  cancel.addEventListener('click', () => {
+    dialog.close('cancel');
+  });
+  let ok = document.getElementById('triangle-dialog-ok');
+  ok.addEventListener('click', () => {
+    dialog.close('ok');
+  });
+}
+
+document.getElementById("disk-dialog-open").onclick = function() {
+  let dialog = document.getElementById("disk-dialog-panel");
+  dialog.showModal();
+  let cancel = document.getElementById('disk-dialog-cancel');
+  cancel.addEventListener('click', () => {
+    dialog.close('cancel');
+  });
+  let ok = document.getElementById('disk-dialog-ok');
+  ok.addEventListener('click', () => {
+    dialog.close('ok');
+  });
+}
+
+document.getElementById("cylinder-dialog-open").onclick = function() {
+  let dialog = document.getElementById("cylinder-dialog-panel");
+  dialog.showModal();
+  let cancel = document.getElementById('cylinder-dialog-cancel');
+  cancel.addEventListener('click', () => {
+    dialog.close('cancel');
+  });
+  let ok = document.getElementById('cylinder-dialog-ok');
+  ok.addEventListener('click', () => {
+    dialog.close('ok');
+  });
+}
+
+document.getElementById("cone-dialog-open").onclick = function() {
+  let dialog = document.getElementById("cone-dialog-panel");
+  dialog.showModal();
+  let cancel = document.getElementById('cone-dialog-cancel');
+  cancel.addEventListener('click', () => {
+    dialog.close('cancel');
+  });
+  let ok = document.getElementById('cone-dialog-ok');
+  ok.addEventListener('click', () => {
+    dialog.close('ok');
+  });
+}
+
+document.getElementById("paraboloid-dialog-open").onclick = function() {
+  let dialog = document.getElementById("paraboloid-dialog-panel");
+  dialog.showModal();
+  let cancel = document.getElementById('paraboloid-dialog-cancel');
+  cancel.addEventListener('click', () => {
+    dialog.close('cancel');
+  });
+  let ok = document.getElementById('paraboloid-dialog-ok');
+  ok.addEventListener('click', () => {
+    dialog.close('ok');
+  });
+}
+
 // Call init once the webpage has loaded
 window.onload = init;
 window.addEventListener('resize', redraw);
