@@ -19,10 +19,10 @@
   <body>
     <h1>Rendering of a cone</h1>
     <h2>Equation of a cone</h2>
-    <p>まず円柱を表す式について確認する．下図において，p1が3次元座標の原点，p2がz軸上にある場合，無限に長い円柱は以下の式で表される．</p>
+    <p>まず円錐を表す式について確認する．下図において，p1が3次元座標の原点，p2がz軸上にある場合，無限に長い円錐は以下の式で表される．</p>
     $$
     \begin{equation}
-    X^2 + Y^2 = (aZ)^2, ~~ \mathrm{where} ~~ a = \frac{|\boldsymbol{p}_2-\boldsymbol{p}_1|}{\mathrm{radius1}-\mathrm{radius2}} \tag{1}
+    X^2 + Y^2 = (aZ)^2, ~~ \mathrm{where} ~~ a = \frac{\mathrm{radius1}-\mathrm{radius2}}{|\boldsymbol{p}_2-\boldsymbol{p}_1|} \tag{1}
     \end{equation}
     $$
     <img src="..\images\cone.svg" width="500">
@@ -37,7 +37,7 @@
     <p>円錐のローカル座標の原点は円錐の頂点に取りたいので，この位置をグローバル座標で確認しておこう．</p>
     $$
     \begin{equation}
-    \boldsymbol{p}_0 = \frac{\mathrm{radius1}}{\mathrm{radius1}-\mathrm{radius2}} (\boldsymbol{p}_2-\boldsymbol{p}_1) \tag{3}
+    \boldsymbol{p}_0 = \frac{\mathrm{radius1}}{\mathrm{radius1}-\mathrm{radius2}} (\boldsymbol{p}_2-\boldsymbol{p}_1) + \boldsymbol{p}_1 \tag{3}
     \end{equation}
     $$
 
@@ -84,7 +84,7 @@
     <p>得られた交点が，円錐の特定の一部に含まれるかは，以下の条件を確認すればよい．</p>
     $$
     \begin{equation}
-    -|\boldsymbol{p}_2 - \boldsymbol{p}_1| \le Z \le 0 \tag{11}
+    -\frac{|\boldsymbol{p}_2 - \boldsymbol{p}_1|}{(\mathrm{radius1} - \mathrm{radius2})}\times\mathrm{radius1} \le Z \le -\frac{|\boldsymbol{p}_2 - \boldsymbol{p}_1|}{(\mathrm{radius1} - \mathrm{radius2})}\times\mathrm{radius2} \tag{11}
     \end{equation}
     $$
     $$
