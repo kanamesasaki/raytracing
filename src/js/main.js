@@ -205,6 +205,7 @@ document.getElementById("sphere-dialog-ok").onclick = function() {
   let numLoc = gl.getUniformLocation(program, 'numSphere');
   gl.uniform1i(numLoc, numSphere);
   dialogSphere.close('ok');
+  draw();
 }
 
 // rectangle dialog
@@ -241,6 +242,7 @@ document.getElementById("rectangle-dialog-ok").onclick = function() {
   let numLoc = gl.getUniformLocation(program, 'numRectangle');
   gl.uniform1i(numLoc, numRectangle);
   dialogRectangle.close('ok');
+  draw();
 }
 
 // triangle dialog
@@ -277,6 +279,7 @@ document.getElementById("triangle-dialog-ok").onclick = function() {
   let numLoc = gl.getUniformLocation(program, 'numTriangle');
   gl.uniform1i(numLoc, numTriangle);
   dialogTriangle.close('ok');
+  draw();
 }
 
 // disk dialog
@@ -319,6 +322,7 @@ document.getElementById("disk-dialog-ok").onclick = function() {
   let numLoc = gl.getUniformLocation(program, 'numDisk');
   gl.uniform1i(numLoc, numDisk);
   dialogDisk.close('ok');
+  draw();
 }
 
 // cylinder dialog
@@ -360,6 +364,7 @@ document.getElementById("cylinder-dialog-ok").onclick = function() {
   let numLoc = gl.getUniformLocation(program, 'numCylinder');
   gl.uniform1i(numLoc, numCylinder);
   dialogCylinder.close('ok');
+  draw();
 }
 
 // cone dialog
@@ -402,6 +407,7 @@ document.getElementById("cone-dialog-ok").onclick = function() {
   let numLoc = gl.getUniformLocation(program, 'numCone');
   gl.uniform1i(numLoc, numCone);
   dialogCone.close('ok');
+  draw();
 }
 
 // paraboloid dialog
@@ -445,20 +451,7 @@ document.getElementById("paraboloid-dialog-ok").onclick = function() {
   let numLoc = gl.getUniformLocation(program, 'numParaboloid');
   gl.uniform1i(numLoc, numParaboloid);
   dialogParaboloid.close('ok');
-}
-
-
-document.getElementById("paraboloid-dialog-open").onclick = function() {
-  let dialog = document.getElementById("paraboloid-dialog-panel");
-  dialog.showModal();
-  let cancel = document.getElementById('paraboloid-dialog-cancel');
-  cancel.addEventListener('click', () => {
-    dialog.close('cancel');
-  });
-  let ok = document.getElementById('paraboloid-dialog-ok');
-  ok.addEventListener('click', () => {
-    dialog.close('ok');
-  });
+  draw();
 }
 
 // Call init once the webpage has loaded
