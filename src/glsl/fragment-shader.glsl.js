@@ -12,6 +12,101 @@ const float maxDistance = 1024.0;
 const vec3 backgroundColor = vec3(0.2);
 const vec3 ambient = vec3(0.05, 0.1, 0.1);
 
+uniform struct RectangleData {
+    vec3 p1;
+    vec3 p2;
+    vec3 p3;
+    vec3 color;
+};
+
+uniform struct TriangleData {
+    vec3 p1;
+    vec3 p2;
+    vec3 p3;
+    vec3 color;
+};
+
+uniform struct SphereData {
+    vec3 p1;
+    vec3 p2;
+    vec3 p3;
+    float radius;
+    float startAngle;
+    float endAngle;
+    float apexTruncation;
+    float baseTruncation;
+    vec3 color;
+};
+
+uniform struct DiskData {
+    vec3 p1;
+    vec3 p2;
+    vec3 p3;
+    float outerRadius;
+    float innerRadius;
+    float startAngle;
+    float endAngle;
+    vec3 color;
+};
+
+uniform struct CylinderData {
+    vec3 p1;
+    vec3 p2;
+    vec3 p3;
+    float radius;
+    float startAngle;
+    float endAngle;
+    vec3 color;
+};
+
+uniform struct ConeData {
+    vec3 p1;
+    vec3 p2;
+    vec3 p3;
+    float radius1;
+    float radius2;
+    float startAngle;
+    float endAngle;
+    vec3 color;
+};
+
+uniform struct ParaboloidData {
+    vec3 p1;
+    vec3 p2;
+    vec3 p3;
+    float radius;
+    float apexTruncation;
+    float startAngle;
+    float endAngle;
+    vec3 color;
+};
+
+uniform struct Intersection {
+    float dist;
+    vec3 normal;
+};
+
+uniform int numSphere;
+uniform SphereData uSpheres[10];
+
+uniform int numRectangle;
+uniform RectangleData uRectangles[10];
+
+uniform int numTriangle;
+uniform TriangleData uTriangles[10];
+
+uniform int numDisk;
+uniform DiskData uDisks[10];
+
+uniform int numCylinder;
+uniform CylinderData uCylinders[10];
+
+uniform int numCone;
+uniform ConeData uCones[10];
+
+uniform int numParaboloid;
+uniform ParaboloidData uParaboloids[10];
+
 vec4 debugColor(bool flag) {
     if (flag == true) {
     return vec4(0.0, 1.0, 0.0, 1.0);
@@ -30,17 +125,17 @@ float azimuth(float y, float x, float min_angle) {
     return theta;
 }
 
-float sphere(vec3 p1, vec3 p2, vec3 p3, float radius, float start_angle, float end_angle, float apex_truncation, float base_truncation, vec3 ro, vec3 rd) {
-    vec3 Rx = normalize(p3 - p1);
-    vec3 Rz = normalize(p2 - p1);
+float sphere(SphereData s, vec3 ro, vec3 rd) {
+    vec3 Rx = normalize(s.p3 - s.p1);
+    vec3 Rz = normalize(s.p2 - s.p1);
     vec3 Ry = cross(Rz, Rx);
     mat3 Rmat = mat3(Rx, Ry, Rz);
     mat3 Rinv = transpose(Rmat);
-    vec3 Ro = Rinv * (ro - p1);
+    vec3 Ro = Rinv * (ro - s.p1);
     vec3 Rd = Rinv * rd;
     float a = dot(Rd, Rd);
     float b = dot(Rd, Ro);
-    float c = dot(Ro, Ro) - radius*radius;
+    float c = dot(Ro, Ro) - s.radius*s.radius;
     float d = b*b - a*c;
     if (d < 0.0) {
         return d;
@@ -49,22 +144,22 @@ float sphere(vec3 p1, vec3 p2, vec3 p3, float radius, float start_angle, float e
     float tm = (-b-sqrt(d)) / a;
     vec3 pp = Ro + tp * Rd;
     vec3 pm = Ro + tm * Rd;
-    float thetap = azimuth(pp[1], pp[0], start_angle);
-    float thetam = azimuth(pm[1], pm[0], start_angle);
+    float thetap = azimuth(pp[1], pp[0], s.startAngle);
+    float thetam = azimuth(pm[1], pm[0], s.startAngle);
 
-    if (thetap <= end_angle) {
-        if (thetam <= end_angle) {
+    if (thetap <= s.endAngle) {
+        if (thetam <= s.endAngle) {
             // both
             if (tm > 0.0) {
-                if (pm[2] <= apex_truncation && pm[2] >= base_truncation) { return tm; }
+                if (pm[2] <= s.apexTruncation && pm[2] >= s.baseTruncation) { return tm; }
                 else {
-                    if (pp[2] <= apex_truncation && pp[2] >= base_truncation) { return tp; }
+                    if (pp[2] <= s.apexTruncation && pp[2] >= s.baseTruncation) { return tp; }
                     else { return -1.0; }
                 }
             }
             else {
                 if (tp > 0.0) {
-                    if (pp[2] <= apex_truncation && pp[2] >= base_truncation) { return tp; }
+                    if (pp[2] <= s.apexTruncation && pp[2] >= s.baseTruncation) { return tp; }
                     else { return -1.0; }
                 }
                 else {
@@ -74,40 +169,40 @@ float sphere(vec3 p1, vec3 p2, vec3 p3, float radius, float start_angle, float e
         }
         else {
             // only plus
-            if (tp > 0.0 && pp[2] <= apex_truncation && pp[2] >= base_truncation) { return tp; }
+            if (tp > 0.0 && pp[2] <= s.apexTruncation && pp[2] >= s.baseTruncation) { return tp; }
             else { return -1.0; }
         }
     }
     else {
-        if (thetam <= end_angle) {
+        if (thetam <= s.endAngle) {
             // only minus
-            if (tm > 0.0 && pm[2] <= apex_truncation && pm[2] >= base_truncation) { return tm; }
+            if (tm > 0.0 && pm[2] <= s.apexTruncation && pm[2] >= s.baseTruncation) { return tm; }
             else { return -1.0; }
         }
         else {
-            // no 
+            // no
             return -1.0;
         }
     }
 }
 
-float rectangle(vec3 p1, vec3 p2, vec3 p3, vec3 ro, vec3 rd) {
-    vec3 Ry = normalize(p3 - p1);
-    vec3 Rx = normalize(p2 - p1);
+float rectangle(RectangleData s, vec3 ro, vec3 rd) {
+    vec3 Ry = normalize(s.p3 - s.p1);
+    vec3 Rx = normalize(s.p2 - s.p1);
     vec3 Rz = cross(Rx, Ry);
     if (dot(Rz, rd) == 0.0) {
         return -1.0;
     }
     mat3 Rmat = mat3(Rx, Ry, Rz);
     mat3 Rinv = transpose(Rmat);
-    vec3 Ro = Rinv * (ro - p1);
+    vec3 Ro = Rinv * (ro - s.p1);
     vec3 Rd = Rinv * rd;
     float t = -Ro[2]/Rd[2];
     if (t <= 0.0) {
         return t;
     }
     vec3 XYZ = Ro + Rd * t;
-    if (0.0 <= XYZ[0] && XYZ[0] <= length(p2 - p1) && 0.0 <= XYZ[1] && XYZ[1] <= length(p3 - p1) ) {
+    if (0.0 <= XYZ[0] && XYZ[0] <= length(s.p2 - s.p1) && 0.0 <= XYZ[1] && XYZ[1] <= length(s.p3 - s.p1)) {
         return t;
     }
     else {
@@ -115,16 +210,16 @@ float rectangle(vec3 p1, vec3 p2, vec3 p3, vec3 ro, vec3 rd) {
     }
 }
 
-float triangle(vec3 p1, vec3 p2, vec3 p3, vec3 ro, vec3 rd) {
-    vec3 Ry = p3 - p1;
-    vec3 Rx = p2 - p1;
+float triangle(TriangleData s, vec3 ro, vec3 rd) {
+    vec3 Ry = s.p3 - s.p1;
+    vec3 Rx = s.p2 - s.p1;
     vec3 Rz = cross(Rx, Ry);
     if (dot(Rz, rd) == 0.0) {
         return -1.0;
     }
     mat3 Rmat = mat3(Rx, Ry, Rz);
     mat3 Rinv = inverse(Rmat);
-    vec3 Ro = Rinv * (ro - p1);
+    vec3 Ro = Rinv * (ro - s.p1);
     vec3 Rd = Rinv * rd;
     float t = -Ro[2]/Rd[2];
     if (t <= 0.0) {
@@ -139,16 +234,16 @@ float triangle(vec3 p1, vec3 p2, vec3 p3, vec3 ro, vec3 rd) {
     }
 }
 
-float disk(vec3 p1, vec3 p2, vec3 p3, float outer_radius, float inner_radius, float start_angle, float end_angle, vec3 ro, vec3 rd) {
-    vec3 Rx = normalize(p3 - p1);
-    vec3 Rz = normalize(p2 - p1);
+float disk(DiskData s, vec3 ro, vec3 rd) {
+    vec3 Rx = normalize(s.p3 - s.p1);
+    vec3 Rz = normalize(s.p2 - s.p1);
     vec3 Ry = cross(Rz, Rx);
     if (dot(Rz, rd) == 0.0) {
         return -1.0;
     }
     mat3 Rmat = mat3(Rx, Ry, Rz);
     mat3 Rinv = transpose(Rmat);
-    vec3 Ro = Rinv * (ro - p1);
+    vec3 Ro = Rinv * (ro - s.p1);
     vec3 Rd = Rinv * rd;
     float t = -Ro[2]/Rd[2];
     if (t <= 0.0) {
@@ -156,8 +251,8 @@ float disk(vec3 p1, vec3 p2, vec3 p3, float outer_radius, float inner_radius, fl
     }
     vec3 XYZ = Ro + Rd * t;
     float dist = XYZ[0]*XYZ[0] + XYZ[1]*XYZ[1];
-    float theta = azimuth(XYZ[1], XYZ[0], start_angle);
-    if (dist > inner_radius*inner_radius && dist < outer_radius*outer_radius && theta > start_angle && theta < end_angle) {
+    float theta = azimuth(XYZ[1], XYZ[0], s.startAngle);
+    if (dist > s.innerRadius*s.innerRadius && dist < s.outerRadius*s.outerRadius && theta > s.startAngle && theta < s.endAngle) {
         return t;
     }
     else {
@@ -165,20 +260,20 @@ float disk(vec3 p1, vec3 p2, vec3 p3, float outer_radius, float inner_radius, fl
     }
 }
 
-float cylinder(vec3 p1, vec3 p2, vec3 p3, float radius, float start_angle, float end_angle, vec3 ro, vec3 rd) {
-    vec3 Rx = normalize(p3 - p1);
-    vec3 Rz = normalize(p2 - p1);
+float cylinder(CylinderData s, vec3 ro, vec3 rd) {
+    vec3 Rx = normalize(s.p3 - s.p1);
+    vec3 Rz = normalize(s.p2 - s.p1);
     vec3 Ry = cross(Rz, Rx);
     if (dot(Rz, rd) == 0.0) {
         return -1.0;
     }
     mat3 Rmat = mat3(Rx, Ry, Rz);
     mat3 Rinv = transpose(Rmat);
-    vec3 Ro = Rinv * (ro - p1);
+    vec3 Ro = Rinv * (ro - s.p1);
     vec3 Rd = Rinv * rd;
     float a = Rd[0]*Rd[0] + Rd[1]*Rd[1];
     float b = Ro[0]*Rd[0] + Ro[1]*Rd[1];
-    float c = Ro[0]*Ro[0] + Ro[1]*Ro[1] - radius*radius;
+    float c = Ro[0]*Ro[0] + Ro[1]*Ro[1] - s.radius*s.radius;
     float d = b*b - a*c;
     if (d < 0.0) {
         return -1.0;
@@ -187,12 +282,12 @@ float cylinder(vec3 p1, vec3 p2, vec3 p3, float radius, float start_angle, float
     float tm = (-b-sqrt(d)) / a;
     vec3 pp = Ro + tp * Rd;
     vec3 pm = Ro + tm * Rd;
-    float thetap = azimuth(pp[1], pp[0], start_angle);
-    float thetam = azimuth(pm[1], pm[0], start_angle);
-    float height = length(p2 - p1);
+    float thetap = azimuth(pp[1], pp[0], s.startAngle);
+    float thetam = azimuth(pm[1], pm[0], s.startAngle);
+    float height = length(s.p2 - s.p1);
 
-    if (thetap <= end_angle) {
-        if (thetam <= end_angle) {
+    if (thetap <= s.endAngle) {
+        if (thetam <= s.endAngle) {
             // both
             if (tm > 0.0) {
                 if (pm[2] >= 0.0 && pm[2] <= height) { return tm; }
@@ -218,7 +313,7 @@ float cylinder(vec3 p1, vec3 p2, vec3 p3, float radius, float start_angle, float
         }
     }
     else {
-        if (thetam <= end_angle) {
+        if (thetam <= s.endAngle) {
             // only minus
             if (tm > 0.0 && pm[2] >= 0.0 && pm[2] <= height) { return tm; }
             else { return -1.0; }
@@ -230,15 +325,15 @@ float cylinder(vec3 p1, vec3 p2, vec3 p3, float radius, float start_angle, float
     }
 }
 
-float cone(vec3 p1, vec3 p2, vec3 p3, float radius1, float radius2, float start_angle, float end_angle, vec3 ro, vec3 rd) {
-    vec3 Rx = normalize(p3 - p1);
-    vec3 Rz = normalize(p2 - p1);
+float cone(ConeData s, vec3 ro, vec3 rd) {
+    vec3 Rx = normalize(s.p3 - s.p1);
+    vec3 Rz = normalize(s.p2 - s.p1);
     vec3 Ry = cross(Rz, Rx);
     mat3 Rmat = mat3(Rx, Ry, Rz);
     mat3 Rinv = transpose(Rmat);
-    float ang = length(p2 - p1) / (radius1 - radius2);
+    float ang = length(s.p2 - s.p1) / (s.radius1 - s.radius2);
     float ang2 = 1.0 / (ang * ang);
-    vec3 p0 = radius1 / (radius1 - radius2) * (p2 - p1) + p1;
+    vec3 p0 = s.radius1 / (s.radius1 - s.radius2) * (s.p2 - s.p1) + s.p1;
     vec3 Ro = Rinv * (ro - p0);
     vec3 Rd = Rinv * rd;
     float a = Rd[0]*Rd[0] + Rd[1]*Rd[1] - ang2*Rd[2]*Rd[2];
@@ -252,13 +347,13 @@ float cone(vec3 p1, vec3 p2, vec3 p3, float radius1, float radius2, float start_
     float tm = (-b-sqrt(d)) / a;
     vec3 pp = Ro + tp * Rd;
     vec3 pm = Ro + tm * Rd;
-    float thetap = azimuth(pp[1], pp[0], start_angle);
-    float thetam = azimuth(pm[1], pm[0], start_angle);
-    float min_height = - radius1 * ang;
-    float max_height = - radius2 * ang;
+    float thetap = azimuth(pp[1], pp[0], s.startAngle);
+    float thetam = azimuth(pm[1], pm[0], s.startAngle);
+    float min_height = - s.radius1 * ang;
+    float max_height = - s.radius2 * ang;
 
-    if (thetap <= end_angle) {
-        if (thetam <= end_angle) {
+    if (thetap <= s.endAngle) {
+        if (thetam <= s.endAngle) {
             // both
             if (tm > 0.0) {
                 if (pm[2] >= min_height && pm[2] <= max_height) { return tm; }
@@ -284,7 +379,7 @@ float cone(vec3 p1, vec3 p2, vec3 p3, float radius1, float radius2, float start_
         }
     }
     else {
-        if (thetam <= end_angle) {
+        if (thetam <= s.endAngle) {
             // only minus
             if (tm > 0.0 && pm[2] >= min_height && pm[2] <= max_height) { return tm; }
             else { return -1.0; }
@@ -296,15 +391,15 @@ float cone(vec3 p1, vec3 p2, vec3 p3, float radius1, float radius2, float start_
     }
 }
 
-float paraboloid(vec3 p1, vec3 p2, vec3 p3, float radius, float start_angle, float end_angle, vec3 ro, vec3 rd) {
-    vec3 Rx = normalize(p3 - p1);
-    vec3 Rz = normalize(p2 - p1);
+float paraboloid(ParaboloidData s, vec3 ro, vec3 rd) {
+    vec3 Rx = normalize(s.p3 - s.p1);
+    vec3 Rz = normalize(s.p2 - s.p1);
     vec3 Ry = cross(Rz, Rx);
     mat3 Rmat = mat3(Rx, Ry, Rz);
     mat3 Rinv = transpose(Rmat);
-    float height = length(p2 - p1);
-    float ang = radius*radius / height;
-    vec3 Ro = Rinv * (ro - p1);
+    float height = length(s.p2 - s.p1);
+    float ang = s.radius*s.radius / height;
+    vec3 Ro = Rinv * (ro - s.p1);
     vec3 Rd = Rinv * rd;
     float a = Rd[0]*Rd[0] + Rd[1]*Rd[1];
     float b = Ro[0]*Rd[0] + Ro[1]*Rd[1] - ang*Rd[2]/2.0;
@@ -317,11 +412,11 @@ float paraboloid(vec3 p1, vec3 p2, vec3 p3, float radius, float start_angle, flo
     float tm = (-b-sqrt(d)) / a;
     vec3 pp = Ro + tp * Rd;
     vec3 pm = Ro + tm * Rd;
-    float thetap = azimuth(pp[1], pp[0], start_angle);
-    float thetam = azimuth(pm[1], pm[0], start_angle);
+    float thetap = azimuth(pp[1], pp[0], s.startAngle);
+    float thetam = azimuth(pm[1], pm[0], s.startAngle);
 
-    if (thetap <= end_angle) {
-        if (thetam <= end_angle) {
+    if (thetap <= s.endAngle) {
+        if (thetam <= s.endAngle) {
             // both
             if (tm > 0.0) {
                 if (pm[2] >= 0.0 && pm[2] <= height) { return tm; }
@@ -347,7 +442,7 @@ float paraboloid(vec3 p1, vec3 p2, vec3 p3, float radius, float start_angle, flo
         }
     }
     else {
-        if (thetam <= end_angle) {
+        if (thetam <= s.endAngle) {
             // only minus
             if (tm > 0.0 && pm[2] >= 0.0 && pm[2] <= height) { return tm; }
             else { return -1.0; }
@@ -442,123 +537,88 @@ vec3 paraboloidNormal(vec3 pt, vec3 p1, vec3 p2, float radius, vec3 rd) {
 
 float intersect(vec3 ro, vec3 rd, out vec3 norm, out vec3 color) {
     float dist = maxDistance;
-    vec3 p1 = vec3(0.0, 0.0, 0.0);
-    vec3 p2 = vec3(0.0, 1.0, 0.0);
-    vec3 p3 = vec3(1.0, 0.0, 0.0);
-    vec3 q1 = vec3(0.0, 0.0, 0.0);
-    vec3 q2 = vec3(0.0, 2.5, 0.0);
-    vec3 q3 = vec3(2.5, 0.0, 0.0);
-    vec3 r1 = vec3(0.0, 0.0, 0.0);
-    vec3 r2 = vec3(0.0, 3.5, 0.0);
-    vec3 r3 = vec3(3.5, 0.0, 0.0);
-    float radius = 2.0;
-    float outer_radius = 3.0;
-    float inner_radius = 1.0;
-    float start_angle = -2.0/4.0 * PI;
-    float end_angle = 3.0/4.0 * PI;
-    float apex_truncation = 2.0;
-    float base_truncation = -1.0;
-    vec3 sphereColor = vec3(0.9, 0.8, 0.6);
-    vec3 rectangleColor = vec3(0.2, 0.3, 0.4);
-    vec3 triangleColor = vec3(0.2, 0.9, 0.4);
-    vec3 diskColor = vec3(0.9, 0.3, 0.2);
-    vec3 cylinderColor = vec3(0.2, 0.3, 0.9);
-    vec3 coneColor = vec3(0.2, 0.9, 0.9);
-    vec3 paraboloidColor = vec3(0.9, 0.1, 0.9);
 
-    // If we wanted multiple objects in the scene you would loop through them here
-    // and return the normal and color with the closest intersection point (lowest distance).
-    float intersectionDistance = sphere(p1, p2, p3, radius, start_angle, end_angle, apex_truncation, base_truncation, ro, rd);
-    if (intersectionDistance > 0.0 && intersectionDistance < dist) {
-        dist = intersectionDistance;
-        // Point of intersection
-        vec3 pt = ro + dist * rd;
-        // Get normal for that point
-        norm = sphereNormal(pt, p1, radius, rd);
-        // Get color for the sphere
-        color = sphereColor;
+    for (int i=0; i<numSphere; i++) {
+        float sphereDistance = sphere(uSpheres[i], ro, rd);
+        if (sphereDistance > 0.0 && sphereDistance < dist) {
+            dist = sphereDistance;
+            // Point of intersection
+            vec3 pt = ro + dist * rd;
+            // Get normal for that point
+            norm = sphereNormal(pt, uSpheres[i].p1, uSpheres[i].radius, rd);
+            // Get color for the sphere
+            color = uSpheres[i].color;
+        }
     }
 
-    float rectangleDistance = rectangle(q1, q2, q3, ro, rd);
-    if (rectangleDistance > 0.0 && rectangleDistance < dist) {
-        dist = rectangleDistance;
-        // Get normal for that point
-        norm = rectangleNormal(q1, q2, q3, rd);
-        // Get color for the sphere
-        color = rectangleColor;
+    for (int i=0; i<numRectangle; i++) {
+        float rectangleDistance = rectangle(uRectangles[i], ro, rd);
+        if (rectangleDistance > 0.0 && rectangleDistance < dist) {
+            dist = rectangleDistance;
+            // Get normal for that point
+            norm = rectangleNormal(uRectangles[i].p1, uRectangles[i].p2, uRectangles[i].p3, rd);
+            // Get color for the sphere
+            color = uRectangles[i].color;
+        }
     }
 
-    q1 = vec3(0.0, 0.0, 2.0);
-    q2 = vec3(0.0, 2.5, 2.0);
-    q3 = vec3(2.5, 0.0, 2.0);
-
-    float triangleDistance = triangle(q1, q2, q3, ro, rd);
-    if (triangleDistance > 0.0 && triangleDistance < dist) {
-        dist = triangleDistance;
-        // Get normal for that point
-        norm = triangleNormal(q1, q2, q3, rd);
-        // Get color for the sphere
-        color = triangleColor;
+    for (int i=0; i<numTriangle; i++) {
+        float triangleDistance = triangle(uTriangles[i], ro, rd);
+        if (triangleDistance > 0.0 && triangleDistance < dist) {
+            dist = triangleDistance;
+            // Get normal for that point
+            norm = triangleNormal(uTriangles[i].p1, uTriangles[i].p2, uTriangles[i].p3, rd);
+            // Get color for the sphere
+            color = uTriangles[i].color;
+        }
     }
 
-    float diskDistance = disk(r1, r2, r3, outer_radius, inner_radius, start_angle, end_angle, ro, rd);
-    if (diskDistance > 0.0 && diskDistance < dist) {
-        dist = diskDistance;
-        // Get normal for that point
-        norm = diskNormal(r1, r2, r3, rd);
-        // Get color for the sphere
-        color = diskColor;
+    for (int i=0; i<numDisk; i++) {
+        float diskDistance = disk(uDisks[i], ro, rd);
+        if (diskDistance > 0.0 && diskDistance < dist) {
+            dist = diskDistance;
+            // Get normal for that point
+            norm = diskNormal(uDisks[i].p1, uDisks[i].p2, uDisks[i].p3, rd);
+            // Get color for the sphere
+            color = uDisks[i].color;
+        }
     }
 
-    radius = 1.0;
-    start_angle = -PI;
-    end_angle = PI;
-    q1 = vec3(0.0, 0.0, 5.0);
-    q2 = vec3(0.0, 2.0, 5.0);
-    q3 = vec3(2.0, 0.0, 5.0);
-
-    float cylinderDistance = cylinder(q1, q2, q3, radius, start_angle, end_angle, ro, rd);
-    if (cylinderDistance > 0.0 && cylinderDistance < dist) {
-        dist = cylinderDistance;
-        vec3 pt = ro + dist * rd;
-        // Get normal for that point
-        norm = cylinderNormal(pt, q1, q2, radius, rd);
-        // Get color for the sphere
-        color = cylinderColor;
+    for (int i=0; i<numCylinder; i++) {
+        float cylinderDistance = cylinder(uCylinders[i], ro, rd);
+        if (cylinderDistance > 0.0 && cylinderDistance < dist) {
+            dist = cylinderDistance;
+            vec3 pt = ro + dist * rd;
+            // Get normal for that point
+            norm = cylinderNormal(pt, uCylinders[i].p1, uCylinders[i].p2, uCylinders[i].radius, rd);
+            // Get color for the sphere
+            color = uCylinders[i].color;
+        }
     }
 
-    q1 = vec3(0.0, 0.0, -5.0);
-    q2 = vec3(0.0, 1.5, -5.0);
-    q3 = vec3(2.5, 0.0, -5.0);
-    float radius1 = 1.5;
-    float radius2 = 1.0;
-
-    float coneDistance = cone(q1, q2, q3, radius1, radius2, start_angle, end_angle, ro, rd);
-    if (coneDistance > 0.0 && coneDistance < dist) {
-        dist = coneDistance;
-        vec3 pt = ro + dist * rd;
-        // Get normal for that point
-        norm = coneNormal(pt, q1, q2, radius1, radius2, rd);
-        // Get color for the sphere
-        color = coneColor;
+    for (int i=0; i<numCone; i++) {
+        float coneDistance = cone(uCones[i], ro, rd);
+        if (coneDistance > 0.0 && coneDistance < dist) {
+            dist = coneDistance;
+            vec3 pt = ro + dist * rd;
+            // Get normal for that point
+            norm = coneNormal(pt, uCones[i].p1, uCones[i].p2, uCones[i].radius1, uCones[i].radius2, rd);
+            // Get color for the sphere
+            color = uCones[i].color;
+        }
     }
 
-    radius = 2.0;
-    q1 = vec3(0.0, 2.0, -5.0);
-    q2 = vec3(0.0, 3.5, -5.0);
-    q3 = vec3(2.5, 2.0, -5.0);
-
-    float paraboloidDistance = paraboloid(q1, q2, q3, radius, start_angle, end_angle, ro, rd);
-    if (paraboloidDistance > 0.0 && paraboloidDistance < dist) {
-        dist = paraboloidDistance;
-        vec3 pt = ro + dist * rd;
-        // Get normal for that point
-        norm = paraboloidNormal(pt, q1, q2, radius, rd);
-        // Get color for the sphere
-        color = paraboloidColor;
+    for (int i=0; i<numParaboloid; i++) {
+        float paraboloidDistance = paraboloid(uParaboloids[i], ro, rd);
+        if (paraboloidDistance > 0.0 && paraboloidDistance < dist) {
+            dist = paraboloidDistance;
+            vec3 pt = ro + dist * rd;
+            // Get normal for that point
+            norm = paraboloidNormal(pt, uParaboloids[i].p1, uParaboloids[i].p2, uParaboloids[i].radius, rd);
+            // Get color for the sphere
+            color = uParaboloids[i].color;
+        }
     }
-
-
     return dist;
 }
 

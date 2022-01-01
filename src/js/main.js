@@ -1,5 +1,12 @@
 import { getVertexShader, getFragmentShader } from './utils.js'
 import { Camera } from './camera.js'
+import { Rectangle } from './rectangle.js'
+import { Triangle } from './triangle.js'
+import { Sphere } from './sphere.js'
+import { Disk } from './disk.js'
+import { Cylinder } from './cylinder.js'
+import { Cone } from './cone.js'
+import { Paraboloid } from './paraboloid.js'
 
 // Global variables that are set and used
 // across the application
@@ -40,6 +47,11 @@ function redraw() {
   canvas.width = window.innerWidth; // window.innerWidth;
   canvas.height = window.innerHeight; // window.innerHeight;
   draw()
+}
+
+function hexToRgb(hex) {
+  let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? [parseInt(result[1], 16)/255.0, parseInt(result[2], 16)/255.0, parseInt(result[3], 16)/255.0] : null;
 }
 
 // Entry point to our application
@@ -151,83 +163,290 @@ document.getElementById("btn4").onclick = function() {
   draw();
 }
 
+// Sphere dialog
+let spheres = []
+let numSphere = 0
+let dialogSphere = document.getElementById("sphere-dialog-panel")
 document.getElementById("sphere-dialog-open").onclick = function() {
-  let dialog = document.getElementById("sphere-dialog-panel");
-  dialog.showModal();
-  let cancel = document.getElementById('sphere-dialog-cancel');
-  cancel.addEventListener('click', () => {
-    dialog.close('cancel');
-  });
-  let ok = document.getElementById('sphere-dialog-ok');
-  ok.addEventListener('click', () => {
-    dialog.close('ok');
-  });
+  dialogSphere.showModal();
+}
+document.getElementById("sphere-dialog-cancel").onclick = function() {
+  dialogSphere.close('cancel');
+}
+document.getElementById("sphere-dialog-ok").onclick = function() {
+  // get elements from the dialog
+  let p1_x = document.getElementById('sphere-p1-x');
+  let p1_y = document.getElementById('sphere-p1-y');
+  let p1_z = document.getElementById('sphere-p1-z');
+  let p2_x = document.getElementById('sphere-p2-x');
+  let p2_y = document.getElementById('sphere-p2-y');
+  let p2_z = document.getElementById('sphere-p2-z');
+  let p3_x = document.getElementById('sphere-p3-x');
+  let p3_y = document.getElementById('sphere-p3-y');
+  let p3_z = document.getElementById('sphere-p3-z');
+  let radius = document.getElementById('sphere-radius');
+  let start_angle = document.getElementById('sphere-start_angle');
+  let end_angle = document.getElementById('sphere-end_angle');
+  let apex_truncation = document.getElementById('sphere-apex_truncation');
+  let base_truncation = document.getElementById('sphere-base_truncation');
+  let color = document.getElementById('sphere-color');
+  // set sphere parameters 
+  let item = new Sphere();
+  item.setP1(p1_x.value, p1_y.value, p1_z.value);
+  item.setP2(p2_x.value, p2_y.value, p2_z.value);
+  item.setP3(p3_x.value, p3_y.value, p3_z.value);
+  item.setRadius(radius.value)
+  item.setAngles(start_angle.value*Math.PI/180.0, end_angle.value*Math.PI/180.0)
+  item.setTruncations(apex_truncation.value, base_truncation.value)
+  item.setColor(hexToRgb(color.value))
+  spheres.push(item);
+  spheres[numSphere].pushToShader(numSphere, gl, program);
+  numSphere += 1;
+  let numLoc = gl.getUniformLocation(program, 'numSphere');
+  gl.uniform1i(numLoc, numSphere);
+  dialogSphere.close('ok');
 }
 
+// rectangle dialog
+let rectangles = []
+let numRectangle = 0
+let dialogRectangle = document.getElementById("rectangle-dialog-panel");
 document.getElementById("rectangle-dialog-open").onclick = function() {
-  let dialog = document.getElementById("rectangle-dialog-panel");
-  dialog.showModal();
-  let cancel = document.getElementById('rectangle-dialog-cancel');
-  cancel.addEventListener('click', () => {
-    dialog.close('cancel');
-  });
-  let ok = document.getElementById('rectangle-dialog-ok');
-  ok.addEventListener('click', () => {
-    dialog.close('ok');
-  });
+  dialogRectangle.showModal();
+}
+document.getElementById("rectangle-dialog-cancel").onclick = function() {
+  dialogRectangle.close('cancel');
+}
+document.getElementById("rectangle-dialog-ok").onclick = function() {
+  // get elements from the dialog
+  let p1_x = document.getElementById('rectangle-p1-x');
+  let p1_y = document.getElementById('rectangle-p1-y');
+  let p1_z = document.getElementById('rectangle-p1-z');
+  let p2_x = document.getElementById('rectangle-p2-x');
+  let p2_y = document.getElementById('rectangle-p2-y');
+  let p2_z = document.getElementById('rectangle-p2-z');
+  let p3_x = document.getElementById('rectangle-p3-x');
+  let p3_y = document.getElementById('rectangle-p3-y');
+  let p3_z = document.getElementById('rectangle-p3-z');
+  let color = document.getElementById('rectangle-color');
+  // set rectangle parameters 
+  let rect = new Rectangle();
+  rect.setP1(p1_x.value, p1_y.value, p1_z.value);
+  rect.setP2(p2_x.value, p2_y.value, p2_z.value);
+  rect.setP3(p3_x.value, p3_y.value, p3_z.value);
+  rect.setColor(hexToRgb(color.value));
+  rectangles.push(rect);
+  rectangles[numRectangle].pushToShader(numRectangle, gl, program);
+  numRectangle += 1;
+  let numLoc = gl.getUniformLocation(program, 'numRectangle');
+  gl.uniform1i(numLoc, numRectangle);
+  dialogRectangle.close('ok');
 }
 
+// triangle dialog
+let triangles = []
+let numTriangle = 0
+let dialogTriangle = document.getElementById("triangle-dialog-panel")
 document.getElementById("triangle-dialog-open").onclick = function() {
-  let dialog = document.getElementById("triangle-dialog-panel");
-  dialog.showModal();
-  let cancel = document.getElementById('triangle-dialog-cancel');
-  cancel.addEventListener('click', () => {
-    dialog.close('cancel');
-  });
-  let ok = document.getElementById('triangle-dialog-ok');
-  ok.addEventListener('click', () => {
-    dialog.close('ok');
-  });
+  dialogTriangle.showModal();
+}
+document.getElementById("triangle-dialog-cancel").onclick = function() {
+  dialogTriangle.close('cancel');
+}
+document.getElementById("triangle-dialog-ok").onclick = function() {
+  // get elements from the dialog
+  let p1_x = document.getElementById('triangle-p1-x');
+  let p1_y = document.getElementById('triangle-p1-y');
+  let p1_z = document.getElementById('triangle-p1-z');
+  let p2_x = document.getElementById('triangle-p2-x');
+  let p2_y = document.getElementById('triangle-p2-y');
+  let p2_z = document.getElementById('triangle-p2-z');
+  let p3_x = document.getElementById('triangle-p3-x');
+  let p3_y = document.getElementById('triangle-p3-y');
+  let p3_z = document.getElementById('triangle-p3-z');
+  let color = document.getElementById('triangle-color');
+  // set triangle parameters 
+  let item = new Triangle();
+  item.setP1(p1_x.value, p1_y.value, p1_z.value);
+  item.setP2(p2_x.value, p2_y.value, p2_z.value);
+  item.setP3(p3_x.value, p3_y.value, p3_z.value);
+  item.setColor(hexToRgb(color.value));
+  triangles.push(item);
+  triangles[numTriangle].pushToShader(numTriangle, gl, program);
+  numTriangle += 1;
+  let numLoc = gl.getUniformLocation(program, 'numTriangle');
+  gl.uniform1i(numLoc, numTriangle);
+  dialogTriangle.close('ok');
 }
 
+// disk dialog
+let disks = []
+let numDisk = 0
+let dialogDisk = document.getElementById("disk-dialog-panel")
 document.getElementById("disk-dialog-open").onclick = function() {
-  let dialog = document.getElementById("disk-dialog-panel");
-  dialog.showModal();
-  let cancel = document.getElementById('disk-dialog-cancel');
-  cancel.addEventListener('click', () => {
-    dialog.close('cancel');
-  });
-  let ok = document.getElementById('disk-dialog-ok');
-  ok.addEventListener('click', () => {
-    dialog.close('ok');
-  });
+  dialogDisk.showModal();
+}
+document.getElementById("disk-dialog-cancel").onclick = function() {
+  dialogDisk.close('cancel');
+}
+document.getElementById("disk-dialog-ok").onclick = function() {
+  // get elements from the dialog
+  let p1_x = document.getElementById('disk-p1-x');
+  let p1_y = document.getElementById('disk-p1-y');
+  let p1_z = document.getElementById('disk-p1-z');
+  let p2_x = document.getElementById('disk-p2-x');
+  let p2_y = document.getElementById('disk-p2-y');
+  let p2_z = document.getElementById('disk-p2-z');
+  let p3_x = document.getElementById('disk-p3-x');
+  let p3_y = document.getElementById('disk-p3-y');
+  let p3_z = document.getElementById('disk-p3-z');
+  let outer_radius = document.getElementById('disk-outer_radius');
+  let inner_radius = document.getElementById('disk-inner_radius');
+  let start_angle = document.getElementById('disk-start_angle');
+  let end_angle = document.getElementById('disk-end_angle');
+  let color = document.getElementById('disk-color');
+  // set disk parameters 
+  let item = new Disk();
+  item.setP1(p1_x.value, p1_y.value, p1_z.value);
+  item.setP2(p2_x.value, p2_y.value, p2_z.value);
+  item.setP3(p3_x.value, p3_y.value, p3_z.value);
+  item.setRadius(outer_radius.value, inner_radius.value)
+  item.setAngles(start_angle.value*Math.PI/180.0, end_angle.value*Math.PI/180.0)
+  item.setColor(hexToRgb(color.value));
+  disks.push(item);
+  disks[numDisk].pushToShader(numDisk, gl, program);
+  numDisk += 1;
+  let numLoc = gl.getUniformLocation(program, 'numDisk');
+  gl.uniform1i(numLoc, numDisk);
+  dialogDisk.close('ok');
 }
 
+// cylinder dialog
+let cylinders = []
+let numCylinder = 0
+let dialogCylinder = document.getElementById("cylinder-dialog-panel")
 document.getElementById("cylinder-dialog-open").onclick = function() {
-  let dialog = document.getElementById("cylinder-dialog-panel");
-  dialog.showModal();
-  let cancel = document.getElementById('cylinder-dialog-cancel');
-  cancel.addEventListener('click', () => {
-    dialog.close('cancel');
-  });
-  let ok = document.getElementById('cylinder-dialog-ok');
-  ok.addEventListener('click', () => {
-    dialog.close('ok');
-  });
+  dialogCylinder.showModal();
+}
+document.getElementById("cylinder-dialog-cancel").onclick = function() {
+  dialogCylinder.close('cancel');
+}
+document.getElementById("cylinder-dialog-ok").onclick = function() {
+  // get elements from the dialog
+  let p1_x = document.getElementById('cylinder-p1-x');
+  let p1_y = document.getElementById('cylinder-p1-y');
+  let p1_z = document.getElementById('cylinder-p1-z');
+  let p2_x = document.getElementById('cylinder-p2-x');
+  let p2_y = document.getElementById('cylinder-p2-y');
+  let p2_z = document.getElementById('cylinder-p2-z');
+  let p3_x = document.getElementById('cylinder-p3-x');
+  let p3_y = document.getElementById('cylinder-p3-y');
+  let p3_z = document.getElementById('cylinder-p3-z');
+  let radius = document.getElementById('cylinder-radius');
+  let start_angle = document.getElementById('cylinder-start_angle');
+  let end_angle = document.getElementById('cylinder-end_angle');
+  let color = document.getElementById('cylinder-color');
+  // set cylinder parameters 
+  let item = new Cylinder();
+  item.setP1(p1_x.value, p1_y.value, p1_z.value);
+  item.setP2(p2_x.value, p2_y.value, p2_z.value);
+  item.setP3(p3_x.value, p3_y.value, p3_z.value);
+  item.setRadius(radius.value)
+  item.setAngles(start_angle.value*Math.PI/180.0, end_angle.value*Math.PI/180.0)
+  item.setColor(hexToRgb(color.value));
+  cylinders.push(item);
+  cylinders[numCylinder].pushToShader(numCylinder, gl, program);
+  numCylinder += 1;
+  let numLoc = gl.getUniformLocation(program, 'numCylinder');
+  gl.uniform1i(numLoc, numCylinder);
+  dialogCylinder.close('ok');
 }
 
+// cone dialog
+let cones = []
+let numCone = 0
+let dialogCone = document.getElementById("cone-dialog-panel")
 document.getElementById("cone-dialog-open").onclick = function() {
-  let dialog = document.getElementById("cone-dialog-panel");
-  dialog.showModal();
-  let cancel = document.getElementById('cone-dialog-cancel');
-  cancel.addEventListener('click', () => {
-    dialog.close('cancel');
-  });
-  let ok = document.getElementById('cone-dialog-ok');
-  ok.addEventListener('click', () => {
-    dialog.close('ok');
-  });
+  dialogCone.showModal();
 }
+document.getElementById("cone-dialog-cancel").onclick = function() {
+  dialogCone.close('cancel');
+}
+document.getElementById("cone-dialog-ok").onclick = function() {
+  // get elements from the dialog
+  let p1_x = document.getElementById('cone-p1-x');
+  let p1_y = document.getElementById('cone-p1-y');
+  let p1_z = document.getElementById('cone-p1-z');
+  let p2_x = document.getElementById('cone-p2-x');
+  let p2_y = document.getElementById('cone-p2-y');
+  let p2_z = document.getElementById('cone-p2-z');
+  let p3_x = document.getElementById('cone-p3-x');
+  let p3_y = document.getElementById('cone-p3-y');
+  let p3_z = document.getElementById('cone-p3-z');
+  let radius1 = document.getElementById('cone-radius1');
+  let radius2 = document.getElementById('cone-radius2');
+  let start_angle = document.getElementById('cone-start_angle');
+  let end_angle = document.getElementById('cone-end_angle');
+  let color = document.getElementById('cone-color');
+  // set cone parameters 
+  let item = new Cone();
+  item.setP1(p1_x.value, p1_y.value, p1_z.value);
+  item.setP2(p2_x.value, p2_y.value, p2_z.value);
+  item.setP3(p3_x.value, p3_y.value, p3_z.value);
+  item.setRadius(radius1.value, radius2.value)
+  item.setAngles(start_angle.value*Math.PI/180.0, end_angle.value*Math.PI/180.0)
+  item.setColor(hexToRgb(color.value));
+  cones.push(item);
+  cones[numCone].pushToShader(numCone, gl, program);
+  numCone += 1;
+  let numLoc = gl.getUniformLocation(program, 'numCone');
+  gl.uniform1i(numLoc, numCone);
+  dialogCone.close('ok');
+}
+
+// paraboloid dialog
+let paraboloids = []
+let numParaboloid = 0
+let dialogParaboloid = document.getElementById("paraboloid-dialog-panel")
+document.getElementById("paraboloid-dialog-open").onclick = function() {
+  dialogParaboloid.showModal();
+}
+document.getElementById("paraboloid-dialog-cancel").onclick = function() {
+  dialogParaboloid.close('cancel');
+}
+document.getElementById("paraboloid-dialog-ok").onclick = function() {
+  // get elements from the dialog
+  let p1_x = document.getElementById('paraboloid-p1-x');
+  let p1_y = document.getElementById('paraboloid-p1-y');
+  let p1_z = document.getElementById('paraboloid-p1-z');
+  let p2_x = document.getElementById('paraboloid-p2-x');
+  let p2_y = document.getElementById('paraboloid-p2-y');
+  let p2_z = document.getElementById('paraboloid-p2-z');
+  let p3_x = document.getElementById('paraboloid-p3-x');
+  let p3_y = document.getElementById('paraboloid-p3-y');
+  let p3_z = document.getElementById('paraboloid-p3-z');
+  let radius = document.getElementById('paraboloid-radius');
+  let apex_truncation = document.getElementById('paraboloid-apex_truncation');
+  let start_angle = document.getElementById('paraboloid-start_angle');
+  let end_angle = document.getElementById('paraboloid-end_angle');
+  let color = document.getElementById('paraboloid-color');
+  // set paraboloid parameters 
+  let item = new Paraboloid();
+  item.setP1(p1_x.value, p1_y.value, p1_z.value);
+  item.setP2(p2_x.value, p2_y.value, p2_z.value);
+  item.setP3(p3_x.value, p3_y.value, p3_z.value);
+  item.setRadius(radius.value)
+  item.setRadius(apex_truncation.value)
+  item.setAngles(start_angle.value*Math.PI/180.0, end_angle.value*Math.PI/180.0)
+  item.setColor(hexToRgb(color.value));
+  paraboloids.push(item);
+  paraboloids[numParaboloid].pushToShader(numParaboloid, gl, program);
+  numParaboloid += 1;
+  let numLoc = gl.getUniformLocation(program, 'numParaboloid');
+  gl.uniform1i(numLoc, numParaboloid);
+  dialogParaboloid.close('ok');
+}
+
 
 document.getElementById("paraboloid-dialog-open").onclick = function() {
   let dialog = document.getElementById("paraboloid-dialog-panel");
