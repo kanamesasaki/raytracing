@@ -163,6 +163,35 @@ document.getElementById("btn4").onclick = function() {
   draw();
 }
 
+document.getElementById("element-viewer").onclick = function() {     
+  // create list tag sentences
+  let text = [];
+  for (const elem of spheres) {
+    text.push('<li>'+ 'Sphere' + '</li>');
+  }
+  for (const elem of rectangles) {
+    text.push('<li>'+ 'Rectangle' + '</li>');
+  }
+  for (const elem of triangles) {
+    text.push('<li>'+ 'Triangle' + '</li>');
+  }
+  for (const elem of disks) {
+    text.push('<li>'+ 'Disk' + '</li>');
+  }
+  for (const elem of cylinders) {
+    text.push('<li>'+ 'Cylinder' + '</li>');
+  }
+  for (const elem of cones) {
+    text.push('<li>'+ 'Cone' + '</li>');
+  }
+  for (const elem of paraboloids) {
+    text.push('<li>'+ 'Paraboloid' + '</li>');
+  }
+  // update HTML
+  let elem = document.getElementById("elements");
+  elem.innerHTML = text.join('');
+}
+
 // Sphere dialog
 let spheres = []
 let numSphere = 0

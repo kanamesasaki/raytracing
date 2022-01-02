@@ -51,10 +51,6 @@
   </ul>
 
   <div class="screen">
-    <input type="button" style="position:absolute; top:100px; right:60px" value="Rotate Y +10&deg;" id="btn1"/>
-    <input type="button" style="position:absolute; top:100px; right:180px" value="Rotate Y -10&deg;" id="btn2"/>
-    <input type="button" style="position:absolute; top:140px; right:120px" value="Rotate X +10&deg;" id="btn3"/>
-    <input type="button" style="position:absolute; top:60px; right:120px" value="Rotate X -10&deg;" id="btn4"/>
     <button type="button" id="sphere-dialog-open">Sphere</button>
     <button type="button" id="rectangle-dialog-open">Rectangle</button>
     <button type="button" id="triangle-dialog-open">Triangle</button>
@@ -62,6 +58,15 @@
     <button type="button" id="cylinder-dialog-open">Cylinder</button>
     <button type="button" id="cone-dialog-open">Cone</button>
     <button type="button" id="paraboloid-dialog-open">Paraboloid</button>
+    <input type="button" style="position:absolute; top:100px; right:60px" value="Rotate Y +10&deg;" id="btn1"/>
+    <input type="button" style="position:absolute; top:100px; right:180px" value="Rotate Y -10&deg;" id="btn2"/>
+    <input type="button" style="position:absolute; top:140px; right:120px" value="Rotate X +10&deg;" id="btn3"/>
+    <input type="button" style="position:absolute; top:60px; right:120px" value="Rotate X -10&deg;" id="btn4"/>
+
+    <details style="position:absolute; top:50px; left:40px" id="element-viewer">
+      <summary>List of Elements</summary>
+      <ul id="elements"></ul>
+    </details>
 
     <!-- sphere dialog -->
     <dialog id="sphere-dialog-panel" role="dialog" aria-describedby="d-message">

@@ -84,6 +84,7 @@ uniform struct ParaboloidData {
 uniform struct Intersection {
     float dist;
     vec3 normal;
+    int id;
 };
 
 uniform int numSphere;
