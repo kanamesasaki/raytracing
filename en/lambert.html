@@ -33,6 +33,24 @@
       Under the assumption of Lambertian reflection, the intensity of the reflected light obeys the Lambert's cosine law. 
       The intensity is described by \( I \cos \theta\) for a unit solid angle, where \(\theta\) is an angle with regard to the surface normal.
     </p>
+    <p>
+      微小表面上に，ローカル基底\(~(\boldsymbol{R}_\mathrm{X},~\boldsymbol{R}_\mathrm{Y},~\boldsymbol{R}_\mathrm{Z})~\)をとって，そこから放出される光線の方向を極座標\(~(\theta, \varphi)~\)で表す．ここで，ローカル基底のZ軸\(\boldsymbol{R}_\mathrm{Z}\)は微小表面の垂直方向とする．
+      極座標パラメタから，ローカル座標系\(~(X,~Y,~Z)~\)およびグローバル座標系\(~(x,~y,~z)~\)への変換は次のように表される．
+    </p>
+
+    \begin{equation}
+    \left[ \begin{array}{c} X \\ Y \\ Z \end{array} \right] 
+    = \left[ \begin{array}{c} 
+    \sin \theta \cos \varphi \\ 
+    \sin \theta \sin \varphi \\ 
+    \cos \theta \cos \end{array} \right] \tag{1}
+    \end{equation}
+    \begin{equation}
+    \left[ \begin{array}{c} x \\ y \\ z \end{array} \right] 
+    = \left[ \begin{array}{ccc} 
+    \boldsymbol{R}_\mathrm{X} & \boldsymbol{R}_\mathrm{Y} & \boldsymbol{R}_\mathrm{Z} \end{array} \right]
+    \left[ \begin{array}{c} X \\ Y \\ Z \end{array} \right] \tag{2}
+    \end{equation}
 
     <h2>Uniform distribution on a sphere</h2>
     <p>
@@ -82,7 +100,7 @@
 
     <h2>Implementation technique</h2>
     <p>
-      Lambertの余弦則に基づいた分布を得たい場合，光の反射する点上に単位球面を描いて，球面上一様にばらまかれた点からランダムに1点選び反射方向を決める，という方法も可能である．
+      Lambertの余弦則に基づいた分布を得たい場合，光の反射する点上に単位球面（単位半球ではない）を描いて，球面上一様にばらまかれた点からランダムに1点選び反射方向を決める，という方法も可能である．
       実際，単位球面の緯度方向パラメタ\(~\theta'~\)と半球状の緯度方向パラメタ\(~\theta~\)の関係式(5)を用いて，式(2)を式(4)に変形出来る．
     </p>
     $$
