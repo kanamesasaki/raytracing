@@ -1,0 +1,26 @@
+{
+  "name": "raytracing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kanamesasaki/raytracing.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kanamesasaki/raytracing/issues"
+  },
+  "homepage": "https://kanamesasaki.github.io/raytracing/",
+  "devDependencies": {
+    "jest": "^27.5.1"
+  }
+}

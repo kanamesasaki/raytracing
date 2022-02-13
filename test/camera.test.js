@@ -1,6 +1,6 @@
-import { Camera } from '../js/camera'
-import * as mat4 from '../gl-matrix/mat4'
-import * as vec3 from '../gl-matrix/vec3'
+import { Camera } from '../src/js/camera'
+import * as mat4 from '../src/gl-matrix/mat4'
+import * as vec3 from '../src/gl-matrix/vec3'
 
 test('camera', () => {
     const a = new Camera()
