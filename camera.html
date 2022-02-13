@@ -14,7 +14,7 @@
     <title>Camera rotation and zoom - Ray Tracing in WebGL2</title>
     <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="style.css">
   </head>
   <header>
     <a href="index.html">Ray Tracing in WebGL2</a> &#187;
@@ -34,13 +34,13 @@
       We implement the camera rotation in the way that the camera rotates around the objects. This means that camera position as well as the orientation changes during the camera rotation.
       The camera position shall be rotated around a certain rotation center and XY axes of the camera coordinate. In order to do this, the camera position in the world coordinate is transformed by the camera local coordinate, rotate the camera position around the camera local axes, then the resulting camera position in the camera local coordinate is transfered back to the world coordinate.
     </p>
-    <img src=".\images\camera_rotation.svg" width="500">
+    <img src=".\images\camera_rotation.svg" width="400">
 
     <h2>Camera zoom</h2>
     <p>
       In the ray tracer, the camera emits rays to draw graphics. Each ray corresponds to each pixel on the canvas. If you place the canvas close to the camera, the camera will zoom out. If you place the canvas far from the camera, the camera will zoom in.   
     </p>
-    <img src=".\images\camera_zoom.svg" width="500">
+    <img src=".\images\camera_zoom.svg" width="600">
     
   </body>
   <footer>

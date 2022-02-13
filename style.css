@@ -9,7 +9,10 @@ body {
     padding: 0;
     border: none;
 
-    margin: 0px 0px 0px 0px;
+    /* margin: 0px 0px 0px 0px; */
+    max-width: 1100px;
+    margin-right: auto;
+    margin-left : auto;
     /* min-width: 740px; */
 }
 

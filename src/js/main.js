@@ -44,7 +44,7 @@ function draw() {
 }
 
 function redraw() {
-  canvas.width = window.innerWidth; // window.innerWidth;
+  canvas.width = (window.innerWidth > 1100) ? 1100 : window.innerWidth; // window.innerWidth;
   canvas.height = window.innerHeight; // window.innerHeight;
   draw()
 }
@@ -59,7 +59,7 @@ function init() {
   // Retrieve the canvas
 
   // Set the canvas to the size of the screen
-  canvas.width = window.innerWidth; // window.innerWidth;
+  canvas.width = (window.innerWidth > 1100) ? 1100 : window.innerWidth; // window.innerWidth;
   canvas.height = window.innerHeight; // window.innerHeight;
 
   // Retrieve a WebGL context

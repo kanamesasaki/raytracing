@@ -39,10 +39,10 @@
       From the definition, the following relations will hold.
     </p>
     \begin{equation}
-    \alpha + \rho^d + \rho^s + \tau = 1 \tag{3}
+    \alpha + \rho^d + \rho^s + \tau = 1 \tag{1}
     \end{equation}
     \begin{equation}
-    \sigma = \frac{\rho^s}{\rho^d + \rho^s} \tag{3}
+    \sigma = \frac{\rho^s}{\rho^d + \rho^s} \tag{2}
     \end{equation}
     <p>
       In the graphical ray tracing implementation, we will not use the absorptance parameter in this form, because RGB color basically represents this feature. For example:
@@ -62,32 +62,28 @@
       The reflected flux direction can be simulated by the following way.
     </p>
     <p>
-      まず微小表面上に，ローカル基底\(~(\boldsymbol{R}_\mathrm{X},~\boldsymbol{R}_\mathrm{Y},~\boldsymbol{R}_\mathrm{Z})~\)をとる．
-      微小表面の垂直方向\(\boldsymbol{n}=(n_x, n_y, n_z)\)は与えられており，
-      ローカル基底のZ軸\(\boldsymbol{R}_\mathrm{Z}\)を\(\boldsymbol{n}\)に一致させるものとする．
-      このとき\(\boldsymbol{R}_\mathrm{X}, \boldsymbol{R}_\mathrm{Y}\)は以下のようにとればよい．
+      On the differential surface, the local bases \(~(\boldsymbol{R}_\mathrm{X},~\boldsymbol{R}_\mathrm{Y},~\boldsymbol{R}_\mathrm{Z})~\) can be defined as shown below.
     </p>
 
     \begin{equation}
-    \boldsymbol{R}_\mathrm{X} = \frac{1}{n_x^2+n_z^2} \left[ \begin{array}{c} n_z \\ 0 \\ -n_x \end{array} \right], ~~
+    \boldsymbol{R}_\mathrm{X} = \frac{1}{\sqrt{n_x^2+n_z^2}} \left[ \begin{array}{c} n_z \\ 0 \\ -n_x \end{array} \right], ~~
     \boldsymbol{R}_\mathrm{Y} = \boldsymbol{R}_\mathrm{Z} \times \boldsymbol{R}_\mathrm{X} 
-    = \frac{1}{n_x^2+n_z^2} \left[ \begin{array}{c} n_y n_x \\ n_z^2 - n_x^2 \\ -n_y n_z \end{array} \right] \tag{3}
+    = \frac{1}{\sqrt{n_x^2+n_z^2}} \left[ \begin{array}{c} n_y n_x \\ n_z^2 - n_x^2 \\ -n_y n_z \end{array} \right] \tag{3}
     \end{equation}
 
-    <p>ただし\(\boldsymbol{n}=(0, 1, 0)\)の場合は以下のようにとる．</p>
+    <p>When \(\boldsymbol{n}=(0, 1, 0)\), the local bases shall be taken by the following way:</p>
 
     \begin{equation}
     \boldsymbol{R}_\mathrm{Z} = \left[ \begin{array}{c} 0 \\ 1 \\ 0 \end{array} \right], ~~
     \boldsymbol{R}_\mathrm{X} = \left[ \begin{array}{c} 0 \\ 0 \\ 1 \end{array} \right], ~~
-    \boldsymbol{R}_\mathrm{Y} = \left[ \begin{array}{c} 1 \\ 0 \\ 0 \end{array} \right]. \tag{2}
+    \boldsymbol{R}_\mathrm{Y} = \left[ \begin{array}{c} 1 \\ 0 \\ 0 \end{array} \right]. \tag{4}
     \end{equation}
 
     <p>
-      次に，設定したローカル座標上で光線の方向を極座標パラメタ\(~(\theta, \varphi)~\)を用いて表す．
-      極座標パラメタ\(~(\theta, \varphi)~\)はランベルトの余弦則に従った確率分布になるように発生させる必要がある．
-      一様乱数からランベルトの余弦則に従った確率分布への変換については後ほど解説するので，
-      ここではある極座標パラメタ\(~(\theta, \varphi)~\)が与えられたものとしよう．
-      このとき，ローカル座標系における光線の方向\(~(X,~Y,~Z)~\)は次のように表される．
+      On this local coordinate, we present the ray direction by using the polar coordinate paramters \(~(\theta, \varphi)~\).
+      These parameters \(~(\theta, \varphi)~\) have to be generated according to the Lambert's cosine law. 
+      We will later discuss about the conversion from the uniform distribution to the distribution based on the Lambert's cosine law.
+      Assuming we got a parameter set \(~(\theta, \varphi)~\), the ray direction \(~(X,~Y,~Z)~\) can be described as shown below.
     </p>
 
     \begin{equation}
@@ -95,29 +91,27 @@
     = \left[ \begin{array}{c} 
     \sin \theta \cos \varphi \\ 
     \sin \theta \sin \varphi \\ 
-    \cos \theta \cos \end{array} \right] \tag{1}
+    \cos \theta \end{array} \right] \tag{5}
     \end{equation}
 
     <p>
-      ローカル座標系\(~(X,~Y,~Z)~\)からグローバル座標系\(~(x,~y,~z)~\)への変換は次のように表される．
-      これにより，ランバート反射による光線方向を表すことが出来た．
+      The conversion from local coordinate \(~(X,~Y,~Z)~\) to the global coordiante \(~(x,~y,~z)~\) is described by:
     </p>
 
     \begin{equation}
     \left[ \begin{array}{c} x \\ y \\ z \end{array} \right] 
     = \left[ \begin{array}{ccc} 
     \boldsymbol{R}_\mathrm{X} & \boldsymbol{R}_\mathrm{Y} & \boldsymbol{R}_\mathrm{Z} \end{array} \right]
-    \left[ \begin{array}{c} X \\ Y \\ Z \end{array} \right] \tag{2}
+    \left[ \begin{array}{c} X \\ Y \\ Z \end{array} \right] \tag{6}
     \end{equation}
 
     <h2>Specular Reflection</h2>
     <p>
-      鏡面反射の場合，入射光の方向が\(\boldsymbol{r}_\mathrm{in}\), 反射面の垂直方向が\(\boldsymbol{n}\)と表されれば，
-      反射光の方向\(\boldsymbol{r}_\mathrm{out}\)は以下のように表される．
+      In case of the specular reflection, the reflected light direction \(\boldsymbol{r}_\mathrm{out}\) is described by using the incoming light direction \(\boldsymbol{r}_\mathrm{in}\) and the surface normal \(\boldsymbol{n}\) as shown below.
     </p>
     
     \begin{equation}
-    \boldsymbol{r}_\mathrm{out} = \boldsymbol{r}_\mathrm{in} - 2 \boldsymbol{n} (\boldsymbol{r}_\mathrm{in} \cdot \boldsymbol{n}) \tag{2}
+    \boldsymbol{r}_\mathrm{out} = \boldsymbol{r}_\mathrm{in} - 2 \boldsymbol{n} (\boldsymbol{r}_\mathrm{in} \cdot \boldsymbol{n}) \tag{7}
     \end{equation}
 
     <img src=".\images\specular_reflection.svg" width="500">
@@ -125,79 +119,44 @@
     <hr>
     <h2>Uniform distribution on a sphere</h2>
     <p>
-      Lambertの余弦則に基づいた分布について議論する前に，単位球面上に一様に点を分布させる方法について考えよう．
-      単位球面上の位置を極座標\(~(\theta, \varphi)~\)で表すとき，各パラメタに対応する微小表面（微小立体角）は\(~\sin \theta d\varphi d\theta~\)で表される．
-      この微小な表面積は\(~\theta~\)に応じて変化する（北極・南極付近で小さくなり，赤道付近で大きくなる）ため，
-      球面上に一様に点をばらまくためには，表面積に比例するよう緯度方向について密度を調整する必要がある．
-      一様にばらまかれた点から1つ選んで，それが\(~0\le \theta \le \theta~\)の範囲に含まれている確率\(p\)は次のように求められる．
+      Before discussing about the distribution of the Lambert's cosines law, we first think about how to homogeneously distribute points over a unit sphere.
+      When describing a position on a unit surface with \((\theta, \varphi)\), the corresponding surface area for \((\theta, \varphi)\) is described by \(\sin \theta d\varphi d\theta\).
+      Since this differential area is a function of \(\theta\), it is necessary to adjust the density in order to homogeneously distribute points.
+      when you choose one point from homogeneously distributed points, the possibility that the selected point is within the range of \(0\le \theta \le \theta\) is described by:
     </p>
     $$
     \begin{equation}
     p = \frac{\int_0^{\theta} \int_0^{2\pi} \sin \theta d\varphi d\theta}{\int_0^{\pi} \int_0^{2\pi} \sin \theta d\varphi d\theta } 
-    = \frac{[-\cos \theta]_{0}^{\theta}}{[-\cos \theta]_{0}^{2\pi}} = \frac{1-\cos \theta}{2} \tag{1}
+    = \frac{[-\cos \theta]_{0}^{\theta}}{[-\cos \theta]_{0}^{2\pi}} = \frac{1-\cos \theta}{2} \tag{8}
     \end{equation}
     $$
     <p>
-      この式を逆に解いてやると，0&ndash;1の値に対して球面上のパラメタ\(~\theta~\)を対応させることが出来る．
+      By solving this equation for \(\theta\), it is possible to relate a 0&ndash;1 value to \(\theta\). 
     </p>
     $$
     \begin{equation}
-    \theta = \arccos (1-2p) \tag{2}
+    \theta = \arccos (1-2p) \tag{9}
     \end{equation}
     $$
-    <p>
-      ただ球面上の一様分布は，逆三角関数を使わないもっと雑な方法でも作ることが出来る．
-      具体的には，\(~[-1:1]^3~\)の立方体内にランダムに点を発生させて，点が単位球の外部であればやり直し，内部であれば正規化して値を返す，という手順を行えばよい．
-    </p>
 
     <h2>Cosine distribution on a hemi-sphere</h2>
     <p>
-      Lambertの余弦則に基づいた分布を得るには，微小表面に\(~\cos \theta~\)の重みをのせた\(~\sin \theta \cos \theta d\varphi d\theta~\)を確率密度関数と考えればよい．
-      今回は半球上での分布を考えたいので，以下のように確率分布を求める．
+      In order to generate distribution for Lambert's cosine law, we should apply \(\cos \theta\) on the differential area.
+      Since we are thinking about hemi-spherical surface, the probability distribution is described by
     </p>
     $$
     \begin{equation}
     p = \frac{\int_0^{\theta} \int_0^{2\pi} \sin \theta \cos \theta d\varphi d\theta}{\int_0^{\pi/2} \int_0^{2\pi} \sin \theta \cos \theta d\varphi d\theta } 
-    = \frac{[-\cos 2\theta]_{0}^{\theta}}{[-\cos 2\theta]_{0}^{\pi/2}} = \frac{1-\cos 2\theta}{2} \tag{3}
+    = \frac{[-\cos 2\theta]_{0}^{\theta}}{[-\cos 2\theta]_{0}^{\pi/2}} = \frac{1-\cos 2\theta}{2} \tag{10}
     \end{equation}
     $$
     <p>
-      この式を逆に解いてやると，0~1の値に対して半球上のパラメタ\(~\theta~\)を対応させることが出来る．
+      By solving this equation for \(\theta\), it is possible to relate a 0&ndash;1 value to \(\theta\). 
     </p>
     
     \begin{equation}
-    \theta = \frac{\arccos (1-2p)}{2} \tag{4}
+    \theta = \frac{\arccos (1-2p)}{2} \tag{11}
     \end{equation}
-
-    <p>
-      Lambertの余弦則に基づいた分布を得たい場合，光の反射する点上に単位球面（単位半球ではない）を描いて，球面上一様にばらまかれた点からランダムに1点選び反射方向を決める，という方法も可能である．
-      実際，単位球面の緯度方向パラメタ\(~\theta'~\)と半球状の緯度方向パラメタ\(~\theta~\)の関係式(5)を用いて，式(2)を式(4)に変形出来る．
-    </p>
-    $$
-    \begin{equation}
-    \frac{\sin \theta'}{\cos \theta' + 1} = \tan \theta \tag{5}
-    \end{equation}
-    $$
-    <p>
-      式(2)より\(\cos \theta' = 1-2p\)なので，これを式(5)に代入して全体2乗すると次のように整理できる．
-    </p>
-    $$
-    \begin{equation}
-    \frac{p}{1-p} = \tan^2 \theta \tag{6}
-    \end{equation}
-    $$
-    <p>
-      \(\tan^2 \theta = \frac{1}{\cos^2 \theta} - 1\)と，倍角の公式\(~2\cos^2 \theta - 1 = \cos 2\theta~\)を用いて変形すると以下の式が得られる．
-    </p>
-    
-    \begin{equation}
-    \cos 2\theta = 1-2p \tag{7}
-    \end{equation}
-
-    <p>
-      先ほど述べたように，球面上の一様分布は逆三角関数を使わなくても作れるので，
-      Lambertの余弦則に従った分布も逆三角関数を使わずに作ることが出来る．
-    </p>
     
     
   </body>
