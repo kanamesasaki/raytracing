@@ -9,8 +9,19 @@ out vec4 fragColor;
 
 const float PI = 3.141592653589793238462643383;
 const float maxDistance = 1024.0;
-const vec3 backgroundColor = vec3(0.2);
-const vec3 ambient = vec3(0.05, 0.1, 0.1);
+const float offset = 0.0001;
+const vec3 backgroundColor = vec3(0.95, 0.95, 0.95);
+
+uniform struct Material {
+    float specularity;
+    float transmittance;
+    vec3 rgb;
+};
+
+uniform struct Ray {
+    vec3 ro;
+    vec3 rd;
+};
 
 uniform struct RectangleData {
     vec3 p1;
@@ -87,6 +98,19 @@ uniform struct Intersection {
     int id;
 };
 
+uint x32 = 314159265u;
+uint uintXorshift(void)
+{
+  x32 ^= x32 << 13;
+  x32 ^= x32 >> 17;
+  x32 ^= x32 << 5;
+  return x32;
+}
+
+float floatXorshift(void) {
+    return float(uintXorshift())*(1.0/4294967295.0);
+}
+
 uniform int numSphere;
 uniform SphereData uSpheres[10];
 
@@ -107,13 +131,6 @@ uniform ConeData uCones[10];
 
 uniform int numParaboloid;
 uniform ParaboloidData uParaboloids[10];
-
-vec4 debugColor(bool flag) {
-    if (flag == true) {
-    return vec4(0.0, 1.0, 0.0, 1.0);
-    }
-    return vec4(1.0, 0.0, 0.0, 1.0);
-}
 
 float azimuth(float y, float x, float min_angle) {
     float theta = atan(y, x);
@@ -536,7 +553,7 @@ vec3 paraboloidNormal(vec3 pt, vec3 p1, vec3 p2, float radius, vec3 rd) {
     }
 }
 
-float intersect(vec3 ro, vec3 rd, out vec3 norm, out vec3 color) {
+float intersect(vec3 ro, vec3 rd, out vec3 pt, out vec3 norm, out vec3 color) {
     float dist = maxDistance;
 
     for (int i=0; i<numSphere; i++) {
@@ -544,7 +561,7 @@ float intersect(vec3 ro, vec3 rd, out vec3 norm, out vec3 color) {
         if (sphereDistance > 0.0 && sphereDistance < dist) {
             dist = sphereDistance;
             // Point of intersection
-            vec3 pt = ro + dist * rd;
+            pt = ro + dist * rd;
             // Get normal for that point
             norm = sphereNormal(pt, uSpheres[i].p1, uSpheres[i].radius, rd);
             // Get color for the sphere
@@ -556,6 +573,8 @@ float intersect(vec3 ro, vec3 rd, out vec3 norm, out vec3 color) {
         float rectangleDistance = rectangle(uRectangles[i], ro, rd);
         if (rectangleDistance > 0.0 && rectangleDistance < dist) {
             dist = rectangleDistance;
+            // Point of intersection
+            pt = ro + dist * rd;
             // Get normal for that point
             norm = rectangleNormal(uRectangles[i].p1, uRectangles[i].p2, uRectangles[i].p3, rd);
             // Get color for the sphere
@@ -567,6 +586,8 @@ float intersect(vec3 ro, vec3 rd, out vec3 norm, out vec3 color) {
         float triangleDistance = triangle(uTriangles[i], ro, rd);
         if (triangleDistance > 0.0 && triangleDistance < dist) {
             dist = triangleDistance;
+            // Point of intersection
+            pt = ro + dist * rd;
             // Get normal for that point
             norm = triangleNormal(uTriangles[i].p1, uTriangles[i].p2, uTriangles[i].p3, rd);
             // Get color for the sphere
@@ -578,6 +599,8 @@ float intersect(vec3 ro, vec3 rd, out vec3 norm, out vec3 color) {
         float diskDistance = disk(uDisks[i], ro, rd);
         if (diskDistance > 0.0 && diskDistance < dist) {
             dist = diskDistance;
+            // Point of intersection
+            pt = ro + dist * rd;
             // Get normal for that point
             norm = diskNormal(uDisks[i].p1, uDisks[i].p2, uDisks[i].p3, rd);
             // Get color for the sphere
@@ -589,7 +612,7 @@ float intersect(vec3 ro, vec3 rd, out vec3 norm, out vec3 color) {
         float cylinderDistance = cylinder(uCylinders[i], ro, rd);
         if (cylinderDistance > 0.0 && cylinderDistance < dist) {
             dist = cylinderDistance;
-            vec3 pt = ro + dist * rd;
+            pt = ro + dist * rd;
             // Get normal for that point
             norm = cylinderNormal(pt, uCylinders[i].p1, uCylinders[i].p2, uCylinders[i].radius, rd);
             // Get color for the sphere
@@ -601,7 +624,7 @@ float intersect(vec3 ro, vec3 rd, out vec3 norm, out vec3 color) {
         float coneDistance = cone(uCones[i], ro, rd);
         if (coneDistance > 0.0 && coneDistance < dist) {
             dist = coneDistance;
-            vec3 pt = ro + dist * rd;
+            pt = ro + dist * rd;
             // Get normal for that point
             norm = coneNormal(pt, uCones[i].p1, uCones[i].p2, uCones[i].radius1, uCones[i].radius2, rd);
             // Get color for the sphere
@@ -613,7 +636,7 @@ float intersect(vec3 ro, vec3 rd, out vec3 norm, out vec3 color) {
         float paraboloidDistance = paraboloid(uParaboloids[i], ro, rd);
         if (paraboloidDistance > 0.0 && paraboloidDistance < dist) {
             dist = paraboloidDistance;
-            vec3 pt = ro + dist * rd;
+            pt = ro + dist * rd;
             // Get normal for that point
             norm = paraboloidNormal(pt, uParaboloids[i].p1, uParaboloids[i].p2, uParaboloids[i].radius, rd);
             // Get color for the sphere
@@ -631,17 +654,60 @@ void main(void) {
     vec3 rx = vec3(uCameraMatrix[0][0], uCameraMatrix[0][1], uCameraMatrix[0][2]);
     vec3 ry = vec3(uCameraMatrix[1][0], uCameraMatrix[1][1], uCameraMatrix[1][2]);
     vec3 rz = vec3(uCameraMatrix[2][0], uCameraMatrix[2][1], uCameraMatrix[2][2]);
+    vec3 pt = vec3(1.0);
     vec3 rd_world = rx * rd_local[0] + ry * rd_local[1] + rz * rd_local[2];
     vec3 objectNormal = vec3(0.0);
-    vec3 objectColor = backgroundColor;
-    vec3 rayColor = backgroundColor;
+    vec3 objectColor;
+    vec3 raySum = vec3(0.0);
     vec3 lightDirection = normalize(vec3(0.5));
-    float t = intersect(ro, rd_world, objectNormal, objectColor);
 
-    if (t < maxDistance) {
-        // Diffuse factor
-        float diffuse = clamp(dot(objectNormal, lightDirection), 0.0, 1.0);
-        rayColor = objectColor * diffuse + ambient;
+    int num_rays = 100;
+    for (int i=0; i<num_rays; i++) {
+        vec3 rayColor = vec3(1.0, 1.0, 1.0);
+        int max_reflections = 10;
+        rd_local = normalize(vec3(-0.5 + uv * vec2(aspectRatio, 1.0), -1.0));
+        ro = vec3(uCameraMatrix[3][0], uCameraMatrix[3][1], uCameraMatrix[3][2]);
+        rx = vec3(uCameraMatrix[0][0], uCameraMatrix[0][1], uCameraMatrix[0][2]);
+        ry = vec3(uCameraMatrix[1][0], uCameraMatrix[1][1], uCameraMatrix[1][2]);
+        rz = vec3(uCameraMatrix[2][0], uCameraMatrix[2][1], uCameraMatrix[2][2]);
+        rd_world = rx * rd_local[0] + ry * rd_local[1] + rz * rd_local[2];
+        while (max_reflections > 0) {
+            float t = intersect(ro, rd_world, pt, objectNormal, objectColor);
+            if (t < maxDistance && t > 0.0) {
+                // Diffuse reflection
+                float phi = 2.0*PI*floatXorshift(void);
+                float theta = acos(1.0-2.0*floatXorshift(void))/2.0;
+                if (objectNormal[0] == 0.0 && objectNormal[2] == 0.0) {
+                    rx = vec3(0.0, 1.0, 0.0);
+                    ry = vec3(0.0, 0.0, 1.0);
+                    rz = vec3(1.0, 0.0, 0.0);
+                }
+                else {
+                    rx = vec3(objectNormal[2], 0.0, -objectNormal[0]) / sqrt(objectNormal[0]*objectNormal[0] + objectNormal[2]*objectNormal[2]);
+                    rz = objectNormal;
+                    ry = cross(rz, rx);
+                }
+                rd_local = vec3(sin(theta)*cos(phi), sin(theta)*sin(phi), cos(theta));
+                rd_world = rx * rd_local[0] + ry * rd_local[1] + rz * rd_local[2];
+                ro = pt + rd_world * offset;
+                rayColor *= objectColor;
+                
+                // Specular reflection
+                // rd_world = rd_world - 2.0 * objectNormal * dot(rd_world, objectNormal);
+                // ro = pt + rd_world * offset;
+                // rayColor *= objectColor;
+            }
+            else {
+                rayColor *= backgroundColor;
+                break;
+            }
+            max_reflections -= 1;
+            if (max_reflections == 0) {
+                rayColor *= backgroundColor;
+            }
+        }
+        raySum += rayColor;
     }
-    fragColor = vec4(rayColor, 1.0);
+    raySum = raySum * (1.0/float(num_rays));
+    fragColor = vec4(raySum, 1.0);
 }`

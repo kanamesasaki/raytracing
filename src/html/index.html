@@ -18,26 +18,15 @@
 <header>
   <a href="https://kanamesasaki.github.io/">Author's page</a> &#187;
   <a href="index.html">Ray Tracing in WebGL2</a>
-  <span style="float: right"><ul class="select-lang">
-      <li><a href="../en/index.html">English</a></li>
-      <li><a href="../de/index.html">Deutsch</a></li>
-      <li><a href="../ja/index.html">日本語</a></li>
-  </ul></span>
 </header>
 <body>
   <h1>Ray Tracing in WebGL2</h1>
-  <h2>Introduction</h2>
-  <p>
-    In this page, basic technics to perform ray tracing are explained. By using the WebGL, it is possible to present the ray tracing results on the web browser.<br>
-    Repository: <a href="https://github.com/kanamesasaki/raytracing">https://github.com/kanamesasaki/raytracing</a><br>
-  </p>
 
   <h2>Ray Tracing Basics</h2>
   <ul>
-    <li><a href="jest.html">Jest testing environment for ES6 modules without Babel</a></li>
-    <li><a href="import-shader.html">How to import GLSL shader scripts from JavaScript</a></li>
-    <li><a href="camera.html">Camera rotation</a></li>
-    <li><a href="lambert.html">Lambertian reflection</a></li>
+    <li><a href="camera.html">Camera rotation and zoom</a></li>
+    <li><a href="lambert.html">Diffuse and specular reflection</a></li>
+    <!-- <li><a href="random.html">Random number generation by Mersenne Twister</a></li> -->
   </ul>
 
   <h2>Rendering of Primitive Shapes</h2>
@@ -68,7 +57,7 @@
       <summary>List of Elements</summary>
       <ul id="elements"></ul>
     </details>
-
+    
     <!-- sphere dialog -->
     <dialog id="sphere-dialog-panel" role="dialog" aria-describedby="d-message">
       <p id="d-message" role="document">Sphere Data</p>
@@ -115,6 +104,10 @@
           <td>Color</td>
           <td><input type=color id="sphere-color" value=#ffff00></td>
         </tr>
+        <tr>
+          <td>Specularity</td>
+          <td><input type=number id="sphere-specularity" min=0.0 max=1.0 step=0.01 value=0.0></td>
+        </tr>
       </table>
       <button type="button" id="sphere-dialog-ok">OK</button>
       <button type="button" id="sphere-dialog-cancel">Cancel</button>
@@ -146,6 +139,10 @@
           <td>Color</td>
           <td><input type=color id="rectangle-color" value=#00cccc></td>
         </tr>
+        <tr>
+          <td>Specularity</td>
+          <td><input type=number id="rectangle-specularity" min=0.0 max=1.0 step=0.01 value=0.0></td>
+        </tr>
       </table>
       <button type="button" id="rectangle-dialog-ok">OK</button>
       <button type="button" id="rectangle-dialog-cancel">Cancel</button>
@@ -176,6 +173,10 @@
         <tr>
           <td>Color</td>
           <td><input type=color id="triangle-color" value=#cc00cc></td>
+        </tr>
+        <tr>
+          <td>Specularity</td>
+          <td><input type=number id="triangle-specularity" min=0.0 max=1.0 step=0.01 value=0.0></td>
         </tr>
       </table>
       <button type="button" id="triangle-dialog-ok">OK</button>
@@ -224,6 +225,10 @@
           <td>Color</td>
           <td><input type=color id="disk-color" value=#cc0000></td>
         </tr>
+        <tr>
+          <td>Specularity</td>
+          <td><input type=number id="disk-specularity" min=0.0 max=1.0 step=0.01 value=0.0></td>
+        </tr>
       </table>
       <button type="button" id="disk-dialog-ok">OK</button>
       <button type="button" id="disk-dialog-cancel">Cancel</button>
@@ -266,6 +271,10 @@
         <tr>
           <td>Color</td>
           <td><input type=color id="cylinder-color" value=#00cc00></td>
+        </tr>
+        <tr>
+          <td>Specularity</td>
+          <td><input type=number id="cylinder-specularity" min=0.0 max=1.0 step=0.01 value=0.0></td>
         </tr>
       </table>
       <button type="button" id="cylinder-dialog-ok">OK</button>
@@ -314,6 +323,10 @@
           <td>Color</td>
           <td><input type=color id="cone-color" value=#0000cc></td>
         </tr>
+        <tr>
+          <td>Specularity</td>
+          <td><input type=number id="cone-specularity" min=0.0 max=1.0 step=0.01 value=0.0></td>
+        </tr>
       </table>
       <button type="button" id="cone-dialog-ok">OK</button>
       <button type="button" id="cone-dialog-cancel">Cancel</button>
@@ -361,6 +374,10 @@
           <td>Color</td>
           <td><input type=color id="paraboloid-color" value=#cccccc></td>
         </tr>
+        <tr>
+          <td>Specularity</td>
+          <td><input type=number id="paraboloid-specularity" min=0.0 max=1.0 step=0.01 value=0.0></td>
+        </tr>
       </table>
       <button type="button" id="paraboloid-dialog-ok">OK</button>
       <button type="button" id="paraboloid-dialog-cancel">Cancel</button>
@@ -371,12 +388,12 @@
     </canvas>
   </div>
 
-  <script type="module" src="../src/js/main.js"></script>  
+  <script type="module" src="../js/main.js"></script>  
 </body>
 
 <footer>
   <a href="https://kanamesasaki.github.io/">Author's page</a> &#187;
-  <a href="index.html">Ray Tracing in WebGL</a>
+  <a href="index.html">Ray Tracing in WebGL2</a>
   <span style="float: right">Copyright 2021, Kaname Sasaki</span>
 </footer>
 </html>

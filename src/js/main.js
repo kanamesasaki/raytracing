@@ -63,7 +63,7 @@ function init() {
   canvas.height = window.innerHeight; // window.innerHeight;
 
   // Retrieve a WebGL context
-  gl = canvas.getContext('webgl2')
+  gl = canvas.getContext('webgl2', {preserveDrawingBuffer: true})
   // Set the clear color to be black
   gl.clearColor(0, 0, 0, 1);
 
